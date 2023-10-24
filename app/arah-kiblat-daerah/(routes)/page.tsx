@@ -536,19 +536,34 @@ const KiblatDaerahPage = () => {
             <p className="mt-3">Perhitungan:</p>
             <div className="sm:flex block">
               <p>- cotan B</p>
-              <p className="absolute left-3 sm:left-20">
-                = sin a &times; cotan b &divide; sin c &minus; cos a &times;
-                cotan c
+              <p className="absolute left-3 sm:left-20 flex">
+                = sin a &times; cotan b &divide; sin c &minus; cos a&nbsp;
+                <span className="sm:flex hidden">&times; cotan c</span>
               </p>
             </div>
-            <div className="flex mt-8 sm:mt-0">
+            <div className="sm:hidden block">
+              <p className="opacity-0">- cotan B</p>
+              <p className="absolute left-3 sm:left-20">&times; cotan c</p>
+            </div>
+            <div className="flex mt-7 sm:mt-0">
               <p className="opacity-0">- cotan B</p>
               <p className="absolute left-3 sm:left-20">
-                = sin {hasilA} &times; cotan {hasilB} &divide; sin {hasilC}{" "}
-                &minus; cos {hasilA} &times; cotan {hasilC}
+                = sin {hasilA} &times; cotan {hasilB}
               </p>
             </div>
-            <div className="flex mt-14 sm:mt-5">
+            <div className="sm:hidden flex">
+              <p className="opacity-0">- cotan B</p>
+              <p className="absolute left-3 sm:left-20">
+                &divide; sin {hasilC} &minus; cos {hasilA}
+              </p>
+            </div>
+            <div className="flex">
+              <p className="opacity-0">- cotan B</p>
+              <p className="absolute left-3 sm:left-20">
+                &times; cotan {hasilC}
+              </p>
+            </div>
+            <div className="flex mt-2 sm:mt-0">
               <p className="opacity-0">- cotan B</p>
               <p className="absolute left-3 sm:left-20">= {desimalCotanB}</p>
             </div>
