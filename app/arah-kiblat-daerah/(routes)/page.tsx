@@ -266,8 +266,9 @@ const KiblatDaerahPage = () => {
     setIsJawaban(true);
   };
   return (
-    <div className="w-full h-full py-32 flex flex-col gap-y-12 justify-center items-center">
-      <div className="flex flex-col gap-y-8 w-[800px] items-center border border-border p-8 overflow-hidden rounded-md">
+    <div className="w-full h-full py-32 flex flex-col justify-center items-center">
+      <h1 className="font-semibold text-xl">Arah Kiblat Daerah</h1>
+      <div className="flex flex-col gap-y-8 w-[800px] mt-4 items-center border border-border p-8 overflow-hidden rounded-md">
         <div className="flex flex-col">
           <Label className="mb-2">Ka&apos;bah</Label>
           <div className="flex gap-x-8">
@@ -476,7 +477,7 @@ const KiblatDaerahPage = () => {
         </div>
       </div>
       {isJawaban && (
-        <div className="w-[800px] h-full border border-border p-4 rounded-md">
+        <div className="w-[800px] h-full mt-12 border border-border p-4 rounded-md">
           <div className="w-full flex flex-col relative">
             <p>Diketahui:</p>
             <div className="flex mt-4">
