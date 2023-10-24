@@ -481,12 +481,12 @@ const KiblatBayanganPage = () => {
   };
 
   return (
-    <div className="w-full h-full py-32 flex flex-col justify-center items-center">
+    <div className="w-full h-full pb-20 pt-10 sm:py-32 flex flex-col justify-center items-center">
       <h1 className="font-semibold text-xl">Arah Kiblat Bayangan</h1>
-      <div className="flex flex-col gap-y-8 w-[800px] items-center mt-4 border border-border p-8 overflow-hidden rounded-md">
+      <div className="flex flex-col gap-y-8 w-full lg:w-[800px] items-center mt-4 border border-border p-8 overflow-hidden rounded-md">
         <div className="flex flex-col">
           <Label className="mb-2">Ka&apos;bah</Label>
-          <div className="flex gap-x-8">
+          <div className="flex flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
                 <Input
@@ -516,7 +516,7 @@ const KiblatBayanganPage = () => {
                 &quot;
               </div>
               <Button
-                className="px-3 w-20 flex justify-between disabled:opacity-100"
+                className="px-3 w-12 flex justify-center disabled:opacity-100"
                 disabled
               >
                 LU
@@ -551,7 +551,7 @@ const KiblatBayanganPage = () => {
                 &quot;
               </div>
               <Button
-                className="px-3 w-20 flex justify-between disabled:opacity-100"
+                className="px-3 w-12 flex justify-center disabled:opacity-100"
                 disabled
               >
                 BT
@@ -561,7 +561,7 @@ const KiblatBayanganPage = () => {
         </div>
         <div className="flex flex-col">
           <Label className="mb-2">Koordinat Daerah/Tempat</Label>
-          <div className="flex gap-x-8">
+          <div className="flex flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
                 <Input
@@ -682,7 +682,7 @@ const KiblatBayanganPage = () => {
             </div>
           </div>
         </div>
-        <div className=" flex gap-x-8">
+        <div className="flex flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
           <div className="flex flex-col gap-y-2">
             <div className="flex flex-col">
               <Label className="mb-2">Deklinasi Matahari</Label>
@@ -790,7 +790,7 @@ const KiblatBayanganPage = () => {
             </div>
           </div>
         </div>
-        <div className=" flex gap-x-8">
+        <div className="flex flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
           <div className="flex flex-col">
             <Label className="mb-2">Arah Kiblat</Label>
             <div className="flex gap-x-8">
@@ -863,64 +863,69 @@ const KiblatBayanganPage = () => {
             </PopoverContent>
           </Popover>
         </div>
-        <div className="w-full flex justify-center">
-          <Button className="w-[600px] mr-[10px]" onClick={calculate}>
+        <div className="w-full flex flex-col gap-y-4 sm:gap-y-0 sm:flex-row items-center justify-center">
+          <Button
+            className="lg:w-[600px] w-full sm:mr-[10px]"
+            onClick={calculate}
+          >
             Calculate
           </Button>
-          <Button size={"icon"} onClick={resetValue}>
+          <Button size={"icon"} onClick={resetValue} className="w-full sm:w-10">
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
       </div>
       {isJawaban && (
-        <div className="w-[800px] h-full mt-12 border border-border p-4 rounded-md">
+        <div className="lg:w-[800px] w-full h-full mt-12 border border-border p-4 rounded-md">
           <div className="w-full flex flex-col relative">
             <p>Diketahui:</p>
-            <div className="flex mt-4">
+            <div className="sm:flex block mt-4">
               <p>- Ka&apos;bah</p>
-              <div className="flex flex-col absolute left-28">
-                <p>: Lintang</p>
-                <p>: Bujur</p>
+              <div className="flex flex-col absolute sm:left-28 left-3">
+                <p>= Lintang</p>
+                <p>= Bujur</p>
               </div>
-              <div className="flex flex-col absolute left-52">
-                <p>: {lintangKabah} LU</p>
-                <p>: {bujurKabah} BT</p>
+              <div className="flex flex-col absolute left-24 sm:left-52">
+                <p>= {lintangKabah} LU</p>
+                <p>= {bujurKabah} BT</p>
               </div>
             </div>
-            <div className="flex mt-12">
+            <div className="sm:flex block mt-14 sm:mt-12">
               <p>- Daerah</p>
-              <div className="flex flex-col absolute left-28">
-                <p>: Lintang</p>
-                <p>: Bujur</p>
+              <div className="flex flex-col absolute sm:left-28 left-3">
+                <p>= Lintang</p>
+                <p>= Bujur</p>
               </div>
-              <div className="flex flex-col absolute left-52">
+              <div className="flex flex-col absolute left-24 sm:left-52">
                 <p>
-                  : {lintangDaerah}{" "}
+                  = {lintangDaerah}{" "}
                   {lintangArray.find((item) => item.value === lintang)?.name}
                 </p>
                 <p>
-                  : {bujurDaerah}{" "}
+                  = {bujurDaerah}{" "}
                   {bujurArray.find((item) => item.value === bujur)?.name}
                 </p>
               </div>
             </div>
-            <div className="flex mt-12">
+            <div className="block sm:flex mt-16 sm:mt-12">
               <p>- Deklinasi Matahari</p>
-              <p className="absolute left-52">: {deklinasiMatahari}</p>
+              <p className="absolute left-3 sm:left-52">
+                = {deklinasiMatahari}
+              </p>
             </div>
-            <div className="flex mt-5">
+            <div className="block sm:flex mt-8 sm:mt-5">
               <p>- Equation of Time</p>
-              <p className="absolute left-52">: {equationOfTime}</p>
+              <p className="absolute left-3  sm:left-52">= {equationOfTime}</p>
             </div>
-            <div className="flex mt-5">
+            <div className="block sm:flex mt-8 sm:mt-5">
               <p>- Arah Kiblat</p>
-              <p className="absolute left-52">: {arahKiblat}</p>
+              <p className="absolute left-3 sm:left-52">= {arahKiblat}</p>
             </div>
-            <div className="flex mt-5">
+            <div className="block sm:flex mt-8 sm:mt-5">
               <p>- Bujur Waktu Daerah</p>
-              <p className="absolute left-52">: {bujurWaktuDaerah}</p>
+              <p className="absolute left-3 sm:left-52">: {bujurWaktuDaerah}</p>
             </div>
-            <Separator className="my-5" />
+            <Separator className="mt-10 mb-5" />
             <p>Unsur:</p>
             <div className="flex">
               <p>Az</p>
@@ -934,7 +939,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">Az</p>
               <p className="absolute left-20">: {hasilAz}</p>
             </div>
-            <div className="flex">
+            <div className="flex sm:mt-0 mt-3">
               <p>a</p>
               <p className="absolute left-20">: 90 - Deklinasi Matahari</p>
             </div>
@@ -946,7 +951,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">a</p>
               <p className="absolute left-20">: {hasilA}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>b</p>
               <p className="absolute left-20">: 90 - Lintang Tempat/Daerah</p>
             </div>
@@ -963,7 +968,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">b</p>
               <p className="absolute left-20">: {hasilB}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>MP</p>
               <p className="absolute left-20">: 12j - Equation of Time</p>
             </div>
@@ -975,11 +980,19 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">MP</p>
               <p className="absolute left-20">: {hasilMP}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>Inter</p>
+              <p className="absolute flex left-20">
+                : &#40;Bujur Tempat/Daerah&nbsp;
+                <span className="hidden sm:flex">
+                  &divide; Bujur Waktu Daerah&#41; &divide; 15
+                </span>
+              </p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">Inter</p>
               <p className="absolute left-20">
-                : &#40;Bujur Tempat/Daerah &divide; Bujur Waktu Daerah&#41;
-                &divide; 15
+                &divide; Bujur Waktu Daerah&#41; &divide; 15
               </p>
             </div>
             <div className="flex">
@@ -1000,21 +1013,26 @@ const KiblatBayanganPage = () => {
             </div>
             <Separator className="my-5" />
             <p>Perhitungan:</p>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>cotan P</p>
               <p className="absolute left-24">: cos b &times; tan Az</p>
             </div>
             <div className="flex">
               <p className="opacity-0">cotan P</p>
               <p className="absolute left-24">
-                : cos {hasilB} &times; tan {hasilAz}
+                : cos {hasilB}&nbsp;
+                <span className="hidden sm:flex">&times; tan {hasilAz}</span>
               </p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">cotan P</p>
+              <p className="absolute left-24">&times; tan {hasilAz}</p>
             </div>
             <div className="flex">
               <p className="opacity-0">cotan P</p>
               <p className="absolute left-24">: {hasilCotanP}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>tan P</p>
               <p className="absolute left-24">: {hasilTanP}</p>
             </div>
@@ -1022,7 +1040,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">tan P</p>
               <p className="absolute left-24">: {derajatTanP}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>cos (C - P)</p>
               <p className="absolute left-24">
                 : cotan a &times; tan b &times; cos P
@@ -1031,50 +1049,76 @@ const KiblatBayanganPage = () => {
             <div className="flex">
               <p className="opacity-0">tan P</p>
               <p className="absolute left-24">
-                : cotan {hasilA} &times; tan {hasilB} &times; cos {derajatTanP}
+                : cotan {hasilA}&nbsp;
+                <span className="hidden sm:flex">&times; tan {hasilB}</span>
+                &nbsp;
+                <span className="hidden sm:flex">
+                  &times; cos {derajatTanP}
+                </span>
               </p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">tan P</p>
+              <p className="absolute left-24">&times; tan {hasilB} </p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">tan P</p>
+              <p className="absolute left-24">&times; cos {derajatTanP}</p>
             </div>
             <div className="flex">
               <p className="opacity-0">tan P</p>
               <p className="absolute left-24">: {hasilCosCP}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>(C - P)</p>
               <p className="absolute left-24">: {hasilCP}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>C</p>
               <p className="absolute left-24">: (C - P) + P</p>
             </div>
             <div className="flex">
               <p className="opacity-0">C</p>
               <p className="absolute left-24">
-                : {hasilCP} + {derajatTanP}
+                : {hasilCP}{" "}
+                <span className="hidden sm:flex">+ {derajatTanP}</span>
               </p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">C</p>
+              <p className="absolute left-24">+ {derajatTanP}</p>
             </div>
             <div className="flex">
               <p className="opacity-0">C</p>
               <p className="absolute left-24">: {hasilC}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>C : 15</p>
               <p className="absolute left-24">: {hasilCS15}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-3 sm:mt-0">
               <p>Bayangan</p>
               <p className="absolute left-24">: hasil C : 15 + MP - Inter</p>
             </div>
             <div className="flex">
               <p className="opacity-0">Bayangan</p>
               <p className="absolute left-24">
-                : {hasilCS15} + {hasilMP} - {hasilInter}
+                : {hasilCS15}&nbsp;
+                <span className="hidden sm:flex">+ {hasilMP}</span>&nbsp;
+                <span className="hidden sm:flex">- {hasilInter}</span>
               </p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">Bayangan</p>
+              <p className="absolute left-24">+ {hasilMP}</p>
+            </div>
+            <div className="flex sm:hidden">
+              <p className="opacity-0">Bayangan</p>
+              <p className="absolute left-24">- {hasilInter}</p>
             </div>
             <div className="flex">
               <p className="opacity-0">Bayangan</p>
-              <p className="absolute left-24">
-                : {hasilBayangan} atau {hasilJamBayangan}
-              </p>
+              <p className="absolute left-24">: {hasilBayangan}</p>
             </div>
             <Separator className="my-3" />
             <p>
