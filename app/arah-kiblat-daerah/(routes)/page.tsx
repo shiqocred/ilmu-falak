@@ -266,12 +266,12 @@ const KiblatDaerahPage = () => {
     setIsJawaban(true);
   };
   return (
-    <div className="w-full h-full py-32 flex flex-col justify-center items-center">
+    <div className="w-full h-full py-10 sm:py-32 flex flex-col justify-center items-center">
       <h1 className="font-semibold text-xl">Arah Kiblat Daerah</h1>
-      <div className="flex flex-col gap-y-8 w-[800px] mt-4 items-center border border-border p-8 overflow-hidden rounded-md">
+      <div className="flex flex-col gap-y-8 w-full lg:w-[800px] mt-4 items-center border border-border p-8 overflow-hidden rounded-md">
         <div className="flex flex-col">
           <Label className="mb-2">Ka&apos;bah</Label>
-          <div className="flex gap-x-8">
+          <div className="flex flex-col lg:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
                 <Input
@@ -301,7 +301,7 @@ const KiblatDaerahPage = () => {
                 &quot;
               </div>
               <Button
-                className="px-3 w-20 flex justify-between disabled:opacity-100"
+                className="px-3 w-14 flex justify-center disabled:opacity-100"
                 disabled
               >
                 LU
@@ -336,7 +336,7 @@ const KiblatDaerahPage = () => {
                 &quot;
               </div>
               <Button
-                className="px-3 w-20 flex justify-between disabled:opacity-100"
+                className="px-3  w-14 flex justify-center disabled:opacity-100"
                 disabled
               >
                 BT
@@ -346,7 +346,7 @@ const KiblatDaerahPage = () => {
         </div>
         <div className="flex flex-col">
           <Label className="mb-2">Koordinator Daerah/Tempat</Label>
-          <div className="flex gap-x-8">
+          <div className="flex flex-col lg:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
                 <Input
@@ -467,119 +467,126 @@ const KiblatDaerahPage = () => {
             </div>
           </div>
         </div>
-        <div className="w-full flex justify-center">
-          <Button className="w-[600px] mr-[10px]" onClick={calculate}>
+        <div className="w-full flex flex-col gap-y-4 sm:gap-y-0 sm:flex-row items-center justify-center">
+          <Button
+            className="lg:w-[600px] w-full sm:mr-[10px]"
+            onClick={calculate}
+          >
             Calculate
           </Button>
-          <Button size={"icon"} onClick={resetValue}>
+          <Button size={"icon"} onClick={resetValue} className="w-full sm:w-10">
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
       </div>
       {isJawaban && (
-        <div className="w-[800px] h-full mt-12 border border-border p-4 rounded-md">
+        <div className="lg:w-[800px] w-full h-full mt-12 border border-border p-4 rounded-md">
           <div className="w-full flex flex-col relative">
             <p>Diketahui:</p>
-            <div className="flex mt-4">
+            <div className="sm:flex block mt-4">
               <p>- Ka&apos;bah</p>
-              <div className="flex flex-col absolute left-28">
-                <p>: Lintang</p>
-                <p>: Bujur</p>
+              <div className="flex flex-col absolute sm:left-28 left-3">
+                <p>= Lintang</p>
+                <p>= Bujur</p>
               </div>
-              <div className="flex flex-col absolute left-52">
-                <p>: {lintangKabah} LU</p>
-                <p>: {bujurKabah} BT</p>
+              <div className="flex flex-col absolute left-24 sm:left-52">
+                <p>= {lintangKabah} LU</p>
+                <p>= {bujurKabah} BT</p>
               </div>
             </div>
-            <div className="flex mt-12">
+            <div className="sm:flex block mt-16 sm:mt-12">
               <p>- Daerah</p>
-              <div className="flex flex-col absolute left-28">
-                <p>: Lintang</p>
-                <p>: Bujur</p>
+              <div className="flex flex-col absolute sm:left-28 left-3">
+                <p>= Lintang</p>
+                <p>= Bujur</p>
               </div>
-              <div className="flex flex-col absolute left-52">
+              <div className="flex flex-col absolute left-24 sm:left-52">
                 <p>
-                  : {lintangDaerah}{" "}
+                  = {lintangDaerah}{" "}
                   {lintangArray.find((item) => item.value === lintang)?.name}
                 </p>
                 <p>
-                  : {bujurDaerah}{" "}
+                  = {bujurDaerah}{" "}
                   {bujurArray.find((item) => item.value === bujur)?.name}
                 </p>
               </div>
             </div>
-            <Separator className="mt-10" />
+            <Separator className="mt-16" />
             <p className="mt-3">Unsur:</p>
-            <div className="flex">
+            <div className="sm:flex block">
               <p>
                 a = 90° -{" "}
                 {lintang === "lintang utara"
                   ? lintangDaerah
                   : `(- ${lintangDaerah})`}{" "}
               </p>
-              <p className="absolute left-72">= {hasilA}</p>
+              <p className="absolute left-3.5 sm:left-72">= {hasilA}</p>
             </div>
-            <div className="flex">
+            <div className="sm:flex block mt-7 sm:mt-0">
               <p>b = 90° - {lintangKabah}</p>
-              <p className="absolute left-72">= {hasilB}</p>
+              <p className="absolute left-3.5 sm:left-72">= {hasilB}</p>
             </div>
-            <div className="flex">
+            <div className="sm:flex block mt-7 sm:mt-0">
               <p>
                 c = {bujurDaerah} - {bujurKabah}
               </p>
-              <p className="absolute left-72">= {hasilC}</p>
+              <p className="absolute left-3.5 sm:left-72">= {hasilC}</p>
             </div>
-            <Separator className="mt-3" />
+            <Separator className="mt-10 sm:mt-3" />
             <p className="mt-3">Perhitungan:</p>
-            <div className="flex">
-              <p>cotan B</p>
-              <p className="absolute left-20">
+            <div className="sm:flex block">
+              <p>- cotan B</p>
+              <p className="absolute left-3 sm:left-20">
                 = sin a &times; cotan b &divide; sin c &minus; cos a &times;
                 cotan c
               </p>
             </div>
-            <div className="flex">
-              <p className="opacity-0">cotan B</p>
-              <p className="absolute left-20">
+            <div className="flex mt-8 sm:mt-0">
+              <p className="opacity-0">- cotan B</p>
+              <p className="absolute left-3 sm:left-20">
                 = sin {hasilA} &times; cotan {hasilB} &divide; sin {hasilC}{" "}
                 &minus; cos {hasilA} &times; cotan {hasilC}
               </p>
             </div>
-            <div className="flex mt-5">
-              <p className="opacity-0">cotan B</p>
-              <p className="absolute left-20">= {desimalCotanB}</p>
+            <div className="flex mt-14 sm:mt-5">
+              <p className="opacity-0">- cotan B</p>
+              <p className="absolute left-3 sm:left-20">= {desimalCotanB}</p>
             </div>
-            <div className="flex">
-              <p className="opacity-0">cotan B</p>
-              <p className="absolute left-20">= {derajatCotanB}</p>
+            <div className="flex mt-1 sm:mt-0">
+              <p className="opacity-0">- cotan B</p>
+              <p className="absolute left-3 sm:left-20">= {derajatCotanB}</p>
             </div>
-            <div className="flex">
-              <p>tan B</p>
-              <p className="absolute left-20">= {desimalTanB}</p>
+            <div className="sm:flex block mt-5 sm:mt-0">
+              <p>- tan B</p>
+              <p className="absolute left-3 sm:left-20">= {desimalTanB}</p>
             </div>
-            <div className="flex">
-              <p className="opacity-0">tan B</p>
-              <p className="absolute left-20">= {derajatTanB}</p>
+            <div className="flex mt-7">
+              <p className="opacity-0">- tan B</p>
+              <p className="absolute left-3 sm:left-20">= {derajatTanB}</p>
             </div>
-            <div className="flex">
-              <p>B</p>
-              <p className="absolute left-20">= {desimalUB}</p>
+            <div className="sm:flex block mt-5 sm:mt-0">
+              <p>- B</p>
+              <p className="absolute left-3 sm:left-20">= {desimalUB}</p>
             </div>
-            <div className="flex">
+            <div className="flex mt-7">
               <p className="opacity-0">B</p>
-              <p className="absolute left-20">= {derajatUB} (U - B)</p>
+              <p className="absolute left-3 sm:left-20">
+                = {derajatUB} (U - B)
+              </p>
             </div>
-            <div className="flex">
+            <div className="flex mt-1">
               <p className="opacity-0">B</p>
-              <p className="absolute left-20">= {derajatBU} (B - U)</p>
+              <p className="absolute left-3 sm:left-20">
+                = {derajatBU} (B - U)
+              </p>
             </div>
             <Separator className="my-3" />
             <p>Jadi, Arah Kiblat daerah anda adalah</p>
-            <p className="ml-10">
+            <p className="ml-0 sm:ml-10">
               = <span className="font-bold text-sm">{derajatUB}</span> dari
               titik Utara (sejati) ke arah Barat atau
             </p>
-            <p className="ml-10">
+            <p className="ml-0 sm:ml-10">
               = <span className="font-bold text-sm">{derajatBU}</span> dari
               titik Barat ke arah Utara
             </p>

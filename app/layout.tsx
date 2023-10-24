@@ -8,16 +8,6 @@ export const metadata = {
   description:
     "Ilmu Falak is the science used to calculate the Qibla direction accurately",
   distribution: "global",
-  openGraph: {
-    title: "Ilmu Falak - BLC UIN SUKA",
-    url: "https://ilmu-falak.vercel.app",
-    locale: "id_ID",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@ilmu_falak",
-  },
 };
 
 export default function RootLayout({

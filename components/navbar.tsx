@@ -4,15 +4,18 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { Button, buttonVariants } from "./ui/button";
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 const Navbar = () => {
   const pathname = usePathname();
   return (
-    <div className="w-full py-5 items-center border-b flex justify-start">
-      <Link href="/" className="z-10">
+    <div className="w-full sm:py-5 py-3 items-center border-b flex sm:justify-start justify-between">
+      <Link href="/" className="z-10 cursor-default sm:cursor-pointer">
         <h1 className="font-bold text-sm">ARAHKIBLAT</h1>
       </Link>
-      <div className="text-sm ml-8 flex gap-x-4">
+      <div className="text-sm ml-8 sm:flex hidden gap-x-4">
         <Link
           href={"/arah-kiblat-daerah"}
           className={cn(
@@ -36,6 +39,43 @@ const Navbar = () => {
           Arah Kiblat Bayangan
         </Link>
       </div>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            size={"icon"}
+            className="flex sm:hidden cursor-default sm:cursor-pointer"
+          >
+            <Menu className="w-4 h-4" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side={"top"}>
+          <SheetTitle className="text-center mb-4">Menu</SheetTitle>
+          <div className="text-sm flex-col flex w-full gap-y-4">
+            <Link
+              href={"/arah-kiblat-daerah"}
+              className={cn(
+                "transition-all w-full h-10 rounded-md flex justify-center items-center cursor-default",
+                pathname === "/arah-kiblat-daerah"
+                  ? "opacity-100 text-white bg-zinc-800"
+                  : "opacity-70"
+              )}
+            >
+              Arah Kiblat Daerah
+            </Link>
+            <Link
+              href={"/arah-kiblat-bayangan"}
+              className={cn(
+                "transition-all w-full h-10 rounded-md flex justify-center items-center cursor-default",
+                pathname === "/arah-kiblat-bayangan"
+                  ? "opacity-100 text-white bg-zinc-800"
+                  : "opacity-70"
+              )}
+            >
+              Arah Kiblat Bayangan
+            </Link>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
