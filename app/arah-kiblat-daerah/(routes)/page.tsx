@@ -269,7 +269,7 @@ const KiblatDaerahPage = () => {
     <div className="w-full h-full py-32 flex flex-col gap-y-12 justify-center items-center">
       <div className="flex flex-col gap-y-8 w-[800px] items-center border border-border p-8 overflow-hidden rounded-md">
         <div className="flex flex-col">
-          <Label className="mb-2">Ka'bah</Label>
+          <Label className="mb-2">Ka&apos;bah</Label>
           <div className="flex gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
@@ -288,7 +288,7 @@ const KiblatDaerahPage = () => {
                   disabled
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -297,7 +297,7 @@ const KiblatDaerahPage = () => {
                   disabled
                   type="text"
                 />
-                "
+                &quot;
               </div>
               <Button
                 className="px-3 w-20 flex justify-between disabled:opacity-100"
@@ -323,7 +323,7 @@ const KiblatDaerahPage = () => {
                   disabled
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -332,7 +332,7 @@ const KiblatDaerahPage = () => {
                   disabled
                   type="text"
                 />
-                "
+                &quot;
               </div>
               <Button
                 className="px-3 w-20 flex justify-between disabled:opacity-100"
@@ -363,7 +363,7 @@ const KiblatDaerahPage = () => {
                   onChange={(e) => handleDerajat(e, 2, "menit", "lintang")}
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -372,7 +372,7 @@ const KiblatDaerahPage = () => {
                   onChange={(e) => handleDerajat(e, 5, "detik", "lintang")}
                   type="number"
                 />
-                "
+                &quot;
               </div>
               <Popover>
                 <PopoverTrigger asChild>
@@ -423,7 +423,7 @@ const KiblatDaerahPage = () => {
                   onChange={(e) => handleDerajat(e, 2, "menit", "bujur")}
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -432,7 +432,7 @@ const KiblatDaerahPage = () => {
                   onChange={(e) => handleDerajat(e, 5, "detik", "bujur")}
                   type="number"
                 />
-                "
+                &quot;
               </div>
               <Popover>
                 <PopoverTrigger asChild>
@@ -480,7 +480,7 @@ const KiblatDaerahPage = () => {
           <div className="w-full flex flex-col relative">
             <p>Diketahui:</p>
             <div className="flex mt-4">
-              <p>- Ka'bah</p>
+              <p>- Ka&apos;bah</p>
               <div className="flex flex-col absolute left-28">
                 <p>: Lintang</p>
                 <p>: Bujur</p>

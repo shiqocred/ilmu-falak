@@ -119,12 +119,12 @@ const KiblatBayanganPage = () => {
   const [hasilBayangan, setHasilBayangan] = useState<string>(jamKosong);
   const [hasilJamBayangan, setHasilJamBayangan] = useState<string>(clockKosong);
 
-  const lintangDaerah = `${lintangDerajat}° ${lintangMenit}' ${lintangDetik}"`;
-  const bujurDaerah = `${bujurDerajat}° ${bujurMenit}' ${bujurDetik}"`;
-  const arahKiblat = `${kiblatDerajat}° ${kiblatMenit}' ${kiblatDetik}"`;
+  const lintangDaerah = `${lintangDerajat}° ${lintangMenit}&lsquo; ${lintangDetik}"`;
+  const bujurDaerah = `${bujurDerajat}° ${bujurMenit}&lsquo; ${bujurDetik}"`;
+  const arahKiblat = `${kiblatDerajat}° ${kiblatMenit}&lsquo; ${kiblatDetik}"`;
   const deklinasiMatahari = `${
     isDekMinus ? "-" : ""
-  }${dekDerajat}° ${dekMenit}' ${dekDetik}"`;
+  }${dekDerajat}° ${dekMenit}&lsquo; ${dekDetik}"`;
   const equationOfTime = `${
     isEqtMinus ? "-" : ""
   }${eqtDerajat}j ${eqtMenit}m ${eqtDetik}d`;
@@ -306,9 +306,9 @@ const KiblatBayanganPage = () => {
     let desAz = 90 - parseFloat(desDerKiblat);
 
     setHasilAz(
-      `${convertToDerajat(desAz)}° ${convertToMenit(desAz)}' ${convertToDetik(
+      `${convertToDerajat(desAz)}° ${convertToMenit(
         desAz
-      ).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(desAz).toFixed(2)}"`
     );
 
     // ----------------------------------------------------------------
@@ -324,9 +324,9 @@ const KiblatBayanganPage = () => {
     let desA = 90 - parseFloat(desDeklimasi);
 
     setHasilA(
-      `${convertToDerajat(desA)}° ${convertToMenit(desA)}' ${convertToDetik(
+      `${convertToDerajat(desA)}° ${convertToMenit(
         desA
-      ).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(desA).toFixed(2)}"`
     );
 
     // ----------------------------------------------------------------
@@ -344,9 +344,9 @@ const KiblatBayanganPage = () => {
     let desB = 90 - parseFloat(desLintangDaerah);
 
     setHasilB(
-      `${convertToDerajat(desB)}° ${convertToMenit(desB)}' ${convertToDetik(
+      `${convertToDerajat(desB)}° ${convertToMenit(
         desB
-      ).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(desB).toFixed(2)}"`
     );
 
     // ----------------------------------------------------------------
@@ -362,9 +362,9 @@ const KiblatBayanganPage = () => {
     let desMP = 12 - parseFloat(desEQT);
 
     setHasilMP(
-      `${convertToDerajat(desMP)}° ${convertToMenit(desMP)}' ${convertToDetik(
+      `${convertToDerajat(desMP)}° ${convertToMenit(
         desMP
-      ).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(desMP).toFixed(2)}"`
     );
 
     // ----------------------------------------------------------------
@@ -381,15 +381,15 @@ const KiblatBayanganPage = () => {
     );
     let inter1 = parseFloat(desBujurDaerah) - 105;
     setHasilInter1(
-      `${convertToDerajat(inter1)}° ${convertToMenit(inter1)}' ${convertToDetik(
+      `${convertToDerajat(inter1)}° ${convertToMenit(
         inter1
-      ).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(inter1).toFixed(2)}"`
     );
 
     const desHasilInter = inter1 / 15;
     const resultInter = `${convertToDerajat(desHasilInter)}° ${convertToMenit(
       desHasilInter
-    )}' ${convertToDetik(desHasilInter).toFixed(2)}"`;
+    )}&lsquo; ${convertToDetik(desHasilInter).toFixed(2)}"`;
     setHasilInter(resultInter);
 
     // ----------------------------------------------------------------
@@ -412,7 +412,7 @@ const KiblatBayanganPage = () => {
     setDerajatTanP(
       `${convertToDerajat(resultP)}° ${convertToMenit(
         resultP
-      )}' ${convertToDetik(resultP).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(resultP).toFixed(2)}"`
     );
 
     // ----------------------------------------------------------------
@@ -433,7 +433,7 @@ const KiblatBayanganPage = () => {
     setHasilCP(
       `${convertToDerajat(resultDesCP)}° ${convertToMenit(
         resultDesCP
-      )}' ${convertToDetik(resultDesCP).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(resultDesCP).toFixed(2)}"`
     );
 
     // ----------------------------------------------------------------
@@ -446,7 +446,7 @@ const KiblatBayanganPage = () => {
     setHasilC(
       `${convertToDerajat(desTotalC)}° ${convertToMenit(
         desTotalC
-      )}' ${convertToDetik(desTotalC).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(desTotalC).toFixed(2)}"`
     );
     // ----------------------------------------------------------------
     // .
@@ -458,7 +458,7 @@ const KiblatBayanganPage = () => {
     setHasilCS15(
       `${convertToDerajat(resultDesC15)}° ${convertToMenit(
         resultDesC15
-      )}' ${convertToDetik(resultDesC15).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(resultDesC15).toFixed(2)}"`
     );
     // ----------------------------------------------------------------
     // .
@@ -470,7 +470,7 @@ const KiblatBayanganPage = () => {
     setHasilBayangan(
       `${convertToDerajat(desTotalBayangan)}° ${convertToMenit(
         desTotalBayangan
-      )}' ${convertToDetik(desTotalBayangan).toFixed(2)}"`
+      )}&lsquo; ${convertToDetik(desTotalBayangan).toFixed(2)}"`
     );
     setHasilJamBayangan(
       `${convertToDerajat(desTotalBayangan)}:${convertToMenit(
@@ -484,7 +484,7 @@ const KiblatBayanganPage = () => {
     <div className="w-full h-full py-32 flex flex-col gap-y-12 justify-center items-center">
       <div className="flex flex-col gap-y-8 w-[800px] items-center border border-border p-8 overflow-hidden rounded-md">
         <div className="flex flex-col">
-          <Label className="mb-2">Ka'bah</Label>
+          <Label className="mb-2">Ka&apos;bah</Label>
           <div className="flex gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
@@ -503,7 +503,7 @@ const KiblatBayanganPage = () => {
                   disabled
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -512,7 +512,7 @@ const KiblatBayanganPage = () => {
                   disabled
                   type="text"
                 />
-                "
+                &quot;
               </div>
               <Button
                 className="px-3 w-20 flex justify-between disabled:opacity-100"
@@ -538,7 +538,7 @@ const KiblatBayanganPage = () => {
                   disabled
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -547,7 +547,7 @@ const KiblatBayanganPage = () => {
                   disabled
                   type="text"
                 />
-                "
+                &quot;
               </div>
               <Button
                 className="px-3 w-20 flex justify-between disabled:opacity-100"
@@ -578,7 +578,7 @@ const KiblatBayanganPage = () => {
                   onChange={(e) => handleChange(e, 2, "menit", "lintang")}
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -587,7 +587,7 @@ const KiblatBayanganPage = () => {
                   onChange={(e) => handleChange(e, 5, "detik", "lintang")}
                   type="number"
                 />
-                "
+                &quot;
               </div>
               <Popover>
                 <PopoverTrigger asChild>
@@ -638,7 +638,7 @@ const KiblatBayanganPage = () => {
                   onChange={(e) => handleChange(e, 2, "menit", "bujur")}
                   type="number"
                 />
-                '
+                &apos;
               </div>
               <div className="w-20 flex border rounded-md box-content pr-1">
                 <Input
@@ -647,7 +647,7 @@ const KiblatBayanganPage = () => {
                   onChange={(e) => handleChange(e, 5, "detik", "bujur")}
                   type="number"
                 />
-                "
+                &quot;
               </div>
               <Popover>
                 <PopoverTrigger asChild>
@@ -710,7 +710,7 @@ const KiblatBayanganPage = () => {
                       onChange={(e) => handleChange(e, 2, "menit", "dek")}
                       type="number"
                     />
-                    '
+                    &apos;
                   </div>
                   <div className="w-20 flex border rounded-md box-content pr-1">
                     <Input
@@ -719,7 +719,7 @@ const KiblatBayanganPage = () => {
                       onChange={(e) => handleChange(e, 5, "detik", "dek")}
                       type="number"
                     />
-                    "
+                    &quot;
                   </div>
                 </div>
               </div>
@@ -812,7 +812,7 @@ const KiblatBayanganPage = () => {
                     onChange={(e) => handleChange(e, 2, "menit", "kiblat")}
                     type="number"
                   />
-                  '
+                  &apos;
                 </div>
                 <div className="w-20 flex border rounded-md box-content pr-1">
                   <Input
@@ -821,7 +821,7 @@ const KiblatBayanganPage = () => {
                     onChange={(e) => handleChange(e, 5, "detik", "kiblat")}
                     type="number"
                   />
-                  "
+                  &quot;
                 </div>
               </div>
             </div>
@@ -878,7 +878,7 @@ const KiblatBayanganPage = () => {
           <div className="w-full flex flex-col relative">
             <p>Diketahui:</p>
             <div className="flex mt-4">
-              <p>- Ka'bah</p>
+              <p>- Ka&apos;bah</p>
               <div className="flex flex-col absolute left-28">
                 <p>: Lintang</p>
                 <p>: Bujur</p>
