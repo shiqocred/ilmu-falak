@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Ilmu Falak - BLC UIN SUKA",
+  title: "Ilmu Falak - SHIQOCRED",
   description:
     "Ilmu Falak is the science used to calculate the Qibla direction accurately",
   distribution: "global",

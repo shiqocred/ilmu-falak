@@ -439,6 +439,7 @@ const KiblatBayanganPage = () => {
         resultDesCP
       )}' ${parseFloat(convertToDetik(resultDesCP).toFixed(2))}"`
     );
+    console.log(resultDesCP);
 
     // ----------------------------------------------------------------
     // .
