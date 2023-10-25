@@ -271,7 +271,7 @@ const KiblatDaerahPage = () => {
       <div className="flex flex-col gap-y-8 w-full lg:w-[800px] mt-4 items-center border border-border p-8 overflow-hidden rounded-md">
         <div className="flex flex-col">
           <Label className="mb-2">Ka&apos;bah</Label>
-          <div className="flex flex-col lg:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
+          <div className="flex flex-col lg:flex-row gap-y-4 lg:gap-y-0 lg:gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
                 <Input
@@ -346,7 +346,7 @@ const KiblatDaerahPage = () => {
         </div>
         <div className="flex flex-col">
           <Label className="mb-2">Koordinator Daerah/Tempat</Label>
-          <div className="flex flex-col lg:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
+          <div className="flex flex-col lg:flex-row gap-y-4 lg:gap-y-0 lg:gap-x-8">
             <div className="flex gap-x-2 items-center">
               <div className="w-14 flex border rounded-md box-content pr-1">
                 <Input
@@ -547,8 +547,11 @@ const KiblatDaerahPage = () => {
             </div>
             <div className="flex mt-7 sm:mt-0">
               <p className="opacity-0">- cotan B</p>
-              <p className="absolute left-3 sm:left-20">
-                = sin {hasilA} &times; cotan {hasilB}
+              <p className="absolute left-3 sm:left-20 flex">
+                = sin {hasilA} &times; cotan {hasilB}&nbsp;
+                <span className="sm:flex hidden">
+                  &divide; sin {hasilC} &minus; cos {hasilA}
+                </span>
               </p>
             </div>
             <div className="sm:hidden flex">
@@ -571,19 +574,19 @@ const KiblatDaerahPage = () => {
               <p className="opacity-0">- cotan B</p>
               <p className="absolute left-3 sm:left-20">= {derajatCotanB}</p>
             </div>
-            <div className="sm:flex block mt-5 sm:mt-0">
+            <div className="sm:flex block mt-5">
               <p>- tan B</p>
               <p className="absolute left-3 sm:left-20">= {desimalTanB}</p>
             </div>
-            <div className="flex mt-7">
+            <div className="flex mt-7 sm:mt-0">
               <p className="opacity-0">- tan B</p>
               <p className="absolute left-3 sm:left-20">= {derajatTanB}</p>
             </div>
-            <div className="sm:flex block mt-5 sm:mt-0">
+            <div className="sm:flex block mt-5">
               <p>- B</p>
               <p className="absolute left-3 sm:left-20">= {desimalUB}</p>
             </div>
-            <div className="flex mt-7">
+            <div className="flex mt-7 sm:mt-0">
               <p className="opacity-0">B</p>
               <p className="absolute left-3 sm:left-20">
                 = {derajatUB} (U - B)

@@ -11,11 +11,11 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 const Navbar = () => {
   const pathname = usePathname();
   return (
-    <div className="w-full sm:py-5 py-3 items-center border-b flex sm:justify-start justify-between">
+    <div className="w-full lg:py-5 py-3 px-3 sm:px-8 items-center border-b flex lg:justify-start justify-between">
       <Link href="/" className="z-10 cursor-default sm:cursor-pointer">
         <h1 className="font-bold text-sm">ARAHKIBLAT</h1>
       </Link>
-      <div className="text-sm ml-8 sm:flex hidden gap-x-4">
+      <div className="text-sm ml-8 lg:flex hidden gap-x-4">
         <Link
           href={"/arah-kiblat-daerah"}
           className={cn(
@@ -43,7 +43,7 @@ const Navbar = () => {
         <SheetTrigger asChild>
           <Button
             size={"icon"}
-            className="flex sm:hidden cursor-default sm:cursor-pointer"
+            className="flex lg:hidden cursor-default sm:cursor-pointer"
           >
             <Menu className="w-4 h-4" />
           </Button>

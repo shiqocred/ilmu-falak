@@ -13,11 +13,11 @@ export default function Home() {
             ILMU FALAK
           </h1>
           <h3 className="sm:text-lg text-sm text-center font-medium">
-            BUSINESS LAW CENTRE UIN SUNAN KALIJAGA YOGYAKARTA
+            SHIQOCRED INCORPORATE BETTER FUTURE TECHNOLOGY SOLUTIONS
           </h3>
           <p className="mt-8 max-w-2xl sm:text-base text-sm text-center font-light text-zinc-500">
-            Official website of Business Law Centre UIN Suka Yogyakarta for
-            calculate the direction of the Qibla.
+            Official website of Shiqocred inc for calculate the direction of the
+            Qibla.
           </p>
           <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-y-0 justify-center items-center mt-8 gap-x-4">
             <Link

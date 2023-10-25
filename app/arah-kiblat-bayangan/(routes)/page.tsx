@@ -317,11 +317,12 @@ const KiblatBayanganPage = () => {
     // .
     // ----------------------------------------------------------------
     let desDeklimasi = convertToDecimal(
-      isDekMinus ? -parseFloat(dekDerajat) : parseFloat(dekDerajat),
+      parseFloat(dekDerajat),
       parseFloat(dekMenit),
       parseFloat(dekDetik)
     );
-    let desA = 90 - parseFloat(desDeklimasi);
+    let desA =
+      90 - (isDekMinus ? -parseFloat(desDeklimasi) : parseFloat(desDeklimasi));
 
     setHasilA(
       `${convertToDerajat(desA)}° ${convertToMenit(desA)}' ${parseFloat(
@@ -335,13 +336,15 @@ const KiblatBayanganPage = () => {
     // .
     // ----------------------------------------------------------------
     let desLintangDaerah = convertToDecimal(
-      lintang === "lintang selatan"
-        ? -parseFloat(lintangDerajat)
-        : parseFloat(lintangDerajat),
+      parseFloat(lintangDerajat),
       parseFloat(lintangMenit),
       parseFloat(lintangDetik)
     );
-    let desB = 90 - parseFloat(desLintangDaerah);
+    let desB =
+      90 -
+      (lintang === "lintang selatan"
+        ? -parseFloat(desLintangDaerah)
+        : parseFloat(desLintangDaerah));
 
     setHasilB(
       `${convertToDerajat(desB)}° ${convertToMenit(desB)}' ${parseFloat(
@@ -355,11 +358,11 @@ const KiblatBayanganPage = () => {
     // .
     // ----------------------------------------------------------------
     let desEQT = convertToDecimal(
-      isEqtMinus ? -parseFloat(eqtDerajat) : parseFloat(eqtDerajat),
+      parseFloat(eqtDerajat),
       parseFloat(eqtMenit),
       parseFloat(eqtDetik)
     );
-    let desMP = 12 - parseFloat(desEQT);
+    let desMP = 12 - (isEqtMinus ? -parseFloat(desEQT) : parseFloat(desEQT));
 
     setHasilMP(
       `${convertToDerajat(desMP)}° ${convertToMenit(desMP)}' ${parseFloat(
@@ -373,13 +376,14 @@ const KiblatBayanganPage = () => {
     // .
     // ----------------------------------------------------------------
     let desBujurDaerah = convertToDecimal(
-      bujur === "bujur barat"
-        ? -parseFloat(bujurDerajat)
-        : parseFloat(bujurDerajat),
+      parseFloat(bujurDerajat),
       parseFloat(bujurMenit),
       parseFloat(bujurDetik)
     );
-    let inter1 = parseFloat(desBujurDaerah) - 105;
+    let inter1 =
+      (bujur === "bujur barat"
+        ? -parseFloat(desBujurDaerah)
+        : parseFloat(desBujurDaerah)) - 105;
     setHasilInter1(
       `${convertToDerajat(inter1)}° ${convertToMenit(inter1)}' ${parseFloat(
         convertToDetik(inter1).toFixed(2)
@@ -927,7 +931,7 @@ const KiblatBayanganPage = () => {
             </div>
             <Separator className="mt-10 mb-5" />
             <p>Unsur:</p>
-            <div className="flex">
+            <div className="flex mt-3">
               <p>Az</p>
               <p className="absolute left-20">: 90° - Arah kiblat</p>
             </div>
@@ -939,7 +943,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">Az</p>
               <p className="absolute left-20">: {hasilAz}</p>
             </div>
-            <div className="flex sm:mt-0 mt-3">
+            <div className="flex mt-3">
               <p>a</p>
               <p className="absolute left-20">: 90 - Deklinasi Matahari</p>
             </div>
@@ -951,7 +955,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">a</p>
               <p className="absolute left-20">: {hasilA}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-3">
               <p>b</p>
               <p className="absolute left-20">: 90 - Lintang Tempat/Daerah</p>
             </div>
@@ -968,7 +972,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">b</p>
               <p className="absolute left-20">: {hasilB}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-3">
               <p>MP</p>
               <p className="absolute left-20">: 12j - Equation of Time</p>
             </div>
@@ -980,7 +984,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">MP</p>
               <p className="absolute left-20">: {hasilMP}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-3">
               <p>Inter</p>
               <p className="absolute flex left-20">
                 : &#40;Bujur Tempat/Daerah&nbsp;
@@ -1013,13 +1017,13 @@ const KiblatBayanganPage = () => {
             </div>
             <Separator className="my-5" />
             <p>Perhitungan:</p>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-3">
               <p>cotan P</p>
               <p className="absolute left-24">: cos b &times; tan Az</p>
             </div>
             <div className="flex">
               <p className="opacity-0">cotan P</p>
-              <p className="absolute left-24">
+              <p className="absolute flex left-24">
                 : cos {hasilB}&nbsp;
                 <span className="hidden sm:flex">&times; tan {hasilAz}</span>
               </p>
@@ -1032,7 +1036,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">cotan P</p>
               <p className="absolute left-24">: {hasilCotanP}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-5">
               <p>tan P</p>
               <p className="absolute left-24">: {hasilTanP}</p>
             </div>
@@ -1040,7 +1044,7 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">tan P</p>
               <p className="absolute left-24">: {derajatTanP}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-5">
               <p>cos (C - P)</p>
               <p className="absolute left-24">
                 : cotan a &times; tan b &times; cos P
@@ -1048,7 +1052,7 @@ const KiblatBayanganPage = () => {
             </div>
             <div className="flex">
               <p className="opacity-0">tan P</p>
-              <p className="absolute left-24">
+              <p className="absolute flex left-24">
                 : cotan {hasilA}&nbsp;
                 <span className="hidden sm:flex">&times; tan {hasilB}</span>
                 &nbsp;
@@ -1069,18 +1073,18 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">tan P</p>
               <p className="absolute left-24">: {hasilCosCP}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-5">
               <p>(C - P)</p>
               <p className="absolute left-24">: {hasilCP}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-5">
               <p>C</p>
               <p className="absolute left-24">: (C - P) + P</p>
             </div>
             <div className="flex">
               <p className="opacity-0">C</p>
-              <p className="absolute left-24">
-                : {hasilCP}{" "}
+              <p className="absolute flex left-24">
+                : {hasilCP}&nbsp;
                 <span className="hidden sm:flex">+ {derajatTanP}</span>
               </p>
             </div>
@@ -1092,17 +1096,17 @@ const KiblatBayanganPage = () => {
               <p className="opacity-0">C</p>
               <p className="absolute left-24">: {hasilC}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-5">
               <p>C : 15</p>
               <p className="absolute left-24">: {hasilCS15}</p>
             </div>
-            <div className="flex mt-3 sm:mt-0">
+            <div className="flex mt-5">
               <p>Bayangan</p>
               <p className="absolute left-24">: hasil C : 15 + MP - Inter</p>
             </div>
             <div className="flex">
               <p className="opacity-0">Bayangan</p>
-              <p className="absolute left-24">
+              <p className="absolute flex left-24">
                 : {hasilCS15}&nbsp;
                 <span className="hidden sm:flex">+ {hasilMP}</span>&nbsp;
                 <span className="hidden sm:flex">- {hasilInter}</span>
