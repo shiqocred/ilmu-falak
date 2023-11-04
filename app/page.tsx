@@ -32,6 +32,12 @@ export default function Home() {
             >
               Arah Kiblat Bayangan
             </Link>
+            <Link
+              href={"/hisab-waktu-shalat"}
+              className={buttonVariants({ variant: "default" })}
+            >
+              Hisab Waktu Shalat
+            </Link>
           </div>
         </div>
       </div>
