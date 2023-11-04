@@ -38,6 +38,17 @@ const Navbar = () => {
         >
           Arah Kiblat Bayangan
         </Link>
+        <Link
+          href={"/hisab-waktu-shalat"}
+          className={cn(
+            "transition-all",
+            pathname === "/hisab-waktu-shalat"
+              ? "opacity-100 underline"
+              : "opacity-70 hover:underline font-light"
+          )}
+        >
+          Hisab Waktu Shalat
+        </Link>
       </div>
       <Sheet>
         <SheetTrigger asChild>
@@ -72,6 +83,17 @@ const Navbar = () => {
               )}
             >
               Arah Kiblat Bayangan
+            </Link>
+            <Link
+              href={"/hisab-waktu-shalat"}
+              className={cn(
+                "transition-all w-full h-10 rounded-md flex justify-center items-center cursor-default",
+                pathname === "/hisab-waktu-shalat"
+                  ? "opacity-100 text-white bg-zinc-800"
+                  : "opacity-70"
+              )}
+            >
+              Hisab Waktu Shalat
             </Link>
           </div>
         </SheetContent>
