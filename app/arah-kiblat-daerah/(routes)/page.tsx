@@ -537,7 +537,7 @@ const KiblatDaerahPage = () => {
             <div className="sm:flex block">
               <p>- cotan B</p>
               <p className="absolute left-3 sm:left-20 flex">
-                = sin a &times; cotan b &divide; sin c &minus; cos a&nbsp;
+                = sin a &times; cotan b &divide; sin c &minus; cos a{" "}
                 <span className="sm:flex hidden">&times; cotan c</span>
               </p>
             </div>
