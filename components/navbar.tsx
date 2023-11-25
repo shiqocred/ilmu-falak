@@ -17,10 +17,10 @@ const Navbar = () => {
       </Link>
       <div className="text-sm ml-8 lg:flex hidden gap-x-4">
         <Link
-          href={"/arah-kiblat-daerah"}
+          href={"/hisab-arah-kiblat"}
           className={cn(
             "transition-all",
-            pathname === "/arah-kiblat-daerah"
+            pathname === "/hisab-arah-kiblat"
               ? "opacity-100 underline"
               : "opacity-70 hover:underline font-light"
           )}
@@ -28,10 +28,10 @@ const Navbar = () => {
           Arah Kiblat Daerah
         </Link>
         <Link
-          href={"/arah-kiblat-bayangan"}
+          href={"/hisab-bayangan-kiblat"}
           className={cn(
             "transition-all",
-            pathname === "/arah-kiblat-bayangan"
+            pathname === "/hisab-bayangan-kiblat"
               ? "opacity-100 underline"
               : "opacity-70 hover:underline font-light"
           )}
@@ -63,10 +63,10 @@ const Navbar = () => {
           <SheetTitle className="text-center mb-4">Menu</SheetTitle>
           <div className="text-sm flex-col flex w-full gap-y-4">
             <Link
-              href={"/arah-kiblat-daerah"}
+              href={"/hisab-arah-kiblat"}
               className={cn(
                 "transition-all w-full h-10 rounded-md flex justify-center items-center cursor-default",
-                pathname === "/arah-kiblat-daerah"
+                pathname === "/hisab-arah-kiblat"
                   ? "opacity-100 text-white bg-zinc-800"
                   : "opacity-70"
               )}
@@ -74,10 +74,10 @@ const Navbar = () => {
               Arah Kiblat Daerah
             </Link>
             <Link
-              href={"/arah-kiblat-bayangan"}
+              href={"/hisab-bayangan-kiblat"}
               className={cn(
                 "transition-all w-full h-10 rounded-md flex justify-center items-center cursor-default",
-                pathname === "/arah-kiblat-bayangan"
+                pathname === "/hisab-bayangan-kiblat"
                   ? "opacity-100 text-white bg-zinc-800"
                   : "opacity-70"
               )}

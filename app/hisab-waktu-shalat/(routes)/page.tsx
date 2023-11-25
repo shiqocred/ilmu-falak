@@ -1,8 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandShortcut,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,63 +16,149 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import {
+  bujurArray,
+  bulanArray,
+  bulanCollection,
   cn,
-  convertCos,
-  convertCotan,
-  convertFromCos,
   convertFromTan,
-  convertSin,
   convertTan,
   convertToDecimal,
   convertToDerajat,
-  convertToDetik,
-  convertToMenit,
   getTrueValue,
+  ikhtiyatResult,
+  ikhtiyatiResult,
+  ikhtiyatiResultImsakSubuh,
+  lintangArray,
+  tanggalArray,
 } from "@/lib/utils";
 import {
   CalendarIcon,
   Check,
   ChevronDown,
+  ChevronRight,
+  Expand,
+  MapPinned,
   Minus,
   Plus,
   RotateCcw,
 } from "lucide-react";
 import React, { useState } from "react";
+import deklinasiArray from "@/lib/deklinasi.json";
+import equationArray from "@/lib/equation.json";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { daerahArray } from "@/lib/daerah";
 
-const lintangArray = [
-  { name: "LU", value: "lintang utara" },
-  { name: "LS", value: "lintang selatan" },
-];
-const bujurArray = [
-  { name: "BB", value: "bujur barat" },
-  { name: "BT", value: "bujur timur" },
-];
-const hariCollection = [
-  "Ahad",
-  "Senin",
-  "Selasa",
-  "Rabu",
-  "Kamis",
-  "Jum'at",
-  "Sabtu",
-];
-const bulanCollection = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
+const CardValue = ({
+  label,
+  value,
+  className,
+  classLabel,
+  children,
+}: {
+  label: string;
+  value?: string;
+  className?: string;
+  classLabel?: string;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div
+      className={cn(
+        "w-full relative border px-5 py-3 rounded-md text-sm transition-all",
+        className
+      )}
+    >
+      <Label
+        className={cn(
+          "absolute -top-3 bg-white px-3 py-1 rounded transition-all",
+          classLabel
+        )}
+      >
+        {label}
+      </Label>
+      {!children ? (
+        <div className="w-full flex py-2 mt-2 items-center justify-center bg-zinc-100">
+          {value}
+        </div>
+      ) : (
+        children
+      )}
+    </div>
+  );
+};
+
+const CardIkhtiyati = ({
+  label,
+  isDzuhur,
+  hasilMP,
+  hasilInter,
+  nilaiIkhtiyat,
+  nilaiIkhtiyati,
+  hasilT,
+  isMinus,
+  isPlus,
+  isImsak,
+  subuhTime,
+}: {
+  label: string;
+  isDzuhur?: boolean;
+  hasilMP?: string;
+  hasilInter?: string;
+  nilaiIkhtiyat?: string;
+  nilaiIkhtiyati?: string;
+  hasilT?: string;
+  isMinus?: boolean;
+  isPlus?: boolean;
+  isImsak?: boolean;
+  subuhTime?: string;
+}) => {
+  const getT15 = () => {
+    return isMinus ? "- t:15" : "+ t:15";
+  };
+  const getHasilT = () => {
+    return isMinus ? "- " + hasilT : "+ " + hasilT;
+  };
+
+  return (
+    <>
+      {isImsak ? (
+        <CardValue label={label} className="hover:bg-zinc-200">
+          <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+            = subuh - 10 menit
+          </div>
+          <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+            = {subuhTime} - 00:10:00
+          </div>
+          <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+            = {nilaiIkhtiyati}
+          </div>
+        </CardValue>
+      ) : (
+        <CardValue label={label} className="hover:bg-zinc-200">
+          <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+            = MP {isDzuhur ? null : getT15()} - Inter{" "}
+            {isPlus ? "+ Ikhtiyat" : "- Ikhtiyat"}
+          </div>
+          <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+            = {hasilMP} {isDzuhur ? null : getHasilT()} - {hasilInter}{" "}
+            {isPlus ? "+ " + nilaiIkhtiyat : "- " + nilaiIkhtiyat}
+          </div>
+          <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+            = {nilaiIkhtiyati}
+          </div>
+        </CardValue>
+      )}
+    </>
+  );
+};
 
 const CardPerhitungan = ({
   label,
@@ -86,160 +178,175 @@ const CardPerhitungan = ({
   nilaiT15: string;
 }) => {
   return (
-    <div className="border rounded-md px-5 py-3 mt-3">
-      <div className="flex items-end">
-        <p>
-          Cos t<span className="text-[8px] ml-1">{label}</span>
-        </p>
-      </div>
-      <div className="border border-border rounded-md">
-        <div className="flex">
-          <p className="absolute flex left-8 sm:left-52">
-            = - tan p &times; tan d + sin H Ashar{" "}
-            <span className="hidden sm:flex">
-              &divide; cos p &divide; cos d
-            </span>
+    <CardValue label={label} className="hover:bg-zinc-200 group">
+      <CardValue
+        label="cos t"
+        className="my-5 group-hover:border group-hover:border-zinc-50"
+        classLabel="group-hover:bg-zinc-200"
+      >
+        <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+          <p className="hidden xl:flex">
+            = - tan p &times; tan d + sin H{label} &divide; cos p &divide; cos d
           </p>
-        </div>
-        <div className="flex sm:hidden mt-5">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute left-11 sm:left-52">
-            &divide; cos p &divide; cos d
+          <p className="hidden lg:flex xl:hidden">
+            = - tan p &times; tan d + sin H{label}
           </p>
+          <p className="flex lg:hidden">= - tan p &times; tan d</p>
         </div>
-        <div className="flex sm:mt-7 mt-1">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute flex left-8 sm:left-52">
+        <div className="w-full flex xl:hidden py-2 mt-2 items-center px-11 text-start bg-zinc-100">
+          <p className="hidden lg:flex xl:hidden">
+            + sin H{label} &divide; cos p &divide; cos d
+          </p>
+          <p className="flex lg:hidden">+ sin H{label}</p>
+        </div>
+        <div className="w-full flex lg:hidden py-2 mt-2 items-center px-11 text-start bg-zinc-100">
+          &divide; cos p &divide; cos d
+        </div>
+        <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+          <p className="hidden xl:flex">
+            = - tan {lintangDaerah} &times; tan {deklinasiMatahari} + sin{" "}
+            {zenit}
+          </p>
+          <p className="hidden lg:flex xl:hidden">
             = - tan {lintangDaerah} &times; tan {deklinasiMatahari}
-            <span className="hidden sm:flex">+ sin {zenit}</span>
           </p>
+          <p className="flex lg:hidden">= - tan {lintangDaerah}</p>
         </div>
-        <div className="flex sm:hidden sm:mt-0 mt-1">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute flex left-11 sm:left-52">
+        <div className="w-full flex py-2 mt-2 items-center px-11 text-start bg-zinc-100">
+          <p className="hidden xl:flex">
+            &divide; cos {lintangDaerah} &divide; cos {deklinasiMatahari}
+          </p>
+          <p className="hidden lg:flex xl:hidden">
             + sin {zenit} &divide; cos {lintangDaerah}
           </p>
+          <p className="flex lg:hidden">&times; tan {deklinasiMatahari}</p>
         </div>
-        <div className="flex sm:mt-0 mt-1">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute flex left-11 sm:left-52">
-            <span className="hidden sm:flex">
-              &divide; cos {lintangDaerah}{" "}
-            </span>
+        <div className="w-full flex xl:hidden py-2 mt-2 items-center px-11 text-start bg-zinc-100">
+          <p className="hidden lg:flex xl:hidden">
             &divide; cos {deklinasiMatahari}
           </p>
+          <p className="flex lg:hidden">+ sin {zenit}</p>
         </div>
-        <div className="flex sm:mt-0 mt-1">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute left-8 sm:left-52">= {nilaiCos}</p>
+        <div className="w-full flex lg:hidden py-2 mt-2 items-center px-11 text-start bg-zinc-100">
+          &divide; cos {lintangDaerah}
         </div>
-      </div>
-      <div className="block mt-3">
-        <p>t</p>
-        <div className="border border-border rounded-md h-8 py-1">
-          <p className="absolute left-8 sm:left-52">= {nilaiT}</p>
+        <div className="w-full flex lg:hidden py-2 mt-2 items-center px-11 text-start bg-zinc-100">
+          &divide; cos {deklinasiMatahari}
         </div>
-      </div>
-      <div className="block mt-3">
-        <p>t:15</p>
-        <div className="border border-border rounded-md h-8 py-1">
-          <p className="absolute left-8 sm:left-52">= {nilaiT15}</p>
+        <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+          = {nilaiCos}
         </div>
-      </div>
-    </div>
+      </CardValue>
+      <CardValue
+        label="t"
+        className="my-5 group-hover:border group-hover:border-zinc-50"
+        classLabel="group-hover:bg-zinc-200"
+      >
+        <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+          = {nilaiT}
+        </div>
+      </CardValue>
+      <CardValue
+        label="t:15"
+        className="my-5 group-hover:border group-hover:border-zinc-50"
+        classLabel="group-hover:bg-zinc-200"
+      >
+        <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+          = {nilaiT15}
+        </div>
+      </CardValue>
+    </CardValue>
   );
 };
 
-const CardIkhtiyati = ({
-  label,
-  isDzuhur,
-  hasilMP,
-  hasilInter,
-  nilaiIkhtiyat,
-  nilaiIkhtiyati,
-  hasilT,
-  isMinus,
-  isPlus,
-}: {
-  label: string;
-  isDzuhur?: boolean;
-  hasilMP: string;
-  hasilInter: string;
-  nilaiIkhtiyat: string;
-  nilaiIkhtiyati: string;
-  hasilT?: string;
-  isMinus?: boolean;
-  isPlus?: boolean;
-}) => {
-  return (
-    <div className="border rounded-md px-5 py-3 mt-3">
-      <p>{label}</p>
-      <div className="border border-border rounded-md mt-1">
-        <div className="flex">
-          <p className="absolute left-8 sm:left-52">
-            = MP {isDzuhur ? null : isMinus ? "- t:15" : "+ t:15"} - Inter{" "}
-            {isPlus ? "+ Ikhtiyat" : "- Ikhtiyat"}
-          </p>
-        </div>
-        <div className="flex mt-6">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute flex left-8 sm:left-52">
-            = {hasilMP}{" "}
-            {isDzuhur ? null : isMinus ? "- " + hasilT : "+ " + hasilT} -{" "}
-            {hasilInter}{" "}
-            <span className="hidden sm:flex">
-              {isPlus ? "+ " + nilaiIkhtiyat : "- " + nilaiIkhtiyat}
-            </span>
-          </p>
-        </div>
-        <div className="flex sm:hidden sm:mt-0 mt-1">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute left-11 sm:left-52">
-            {isPlus ? "+ " + nilaiIkhtiyat : "- " + nilaiIkhtiyat}
-          </p>
-        </div>
-        <div className="flex sm:mt-0 mt-1">
-          <p className="opacity-0">{label}</p>
-          <p className="absolute left-8 sm:left-52">= {nilaiIkhtiyati}</p>
-        </div>
-      </div>
-    </div>
-  );
+const getValueArray = (a: number | undefined) => {
+  return a ?? 0;
+};
+const getValuePartial = (a: number) => {
+  return Math.abs(a).toString().length === 1
+    ? `0${Math.abs(a)}`
+    : `${Math.abs(a)}`;
 };
 
-const KiblatBayanganPage = () => {
-  const [lintang, setLintang] = useState<string>("lintang utara");
-  const [bujur, setBujur] = useState<string>("bujur barat");
-  const [tanggal, setTanggal] = useState<Date>();
-
-  const [lintangDerajat, setLintangDerajat] = useState<string>("0");
-  const [lintangMenit, setLintangMenit] = useState<string>("0");
-  const [lintangDetik, setLintangDetik] = useState<string>("0");
-
-  const [bujurDerajat, setBujurDerajat] = useState<string>("0");
-  const [bujurMenit, setBujurMenit] = useState<string>("0");
-  const [bujurDetik, setBujurDetik] = useState<string>("0");
-
-  const [dekDerajat, setDekDerajat] = useState<string>("0");
-  const [dekMenit, setDekMenit] = useState<string>("0");
-  const [dekDetik, setDekDetik] = useState<string>("0");
-
-  const [eqtDerajat, setEqtDerajat] = useState<string>("0");
-  const [eqtMenit, setEqtMenit] = useState<string>("0");
-  const [eqtDetik, setEqtDetik] = useState<string>("0");
-
-  const [isEqtMinus, setIsEqtMinus] = useState(false);
-  const [isDekMinus, setIsDekMinus] = useState(false);
-
-  const [isJawaban, setIsJawaban] = useState<boolean>(false);
-
+const HisabWaktuShalatPage = () => {
+  // variabel
   const derajatKosong = `00° 00' 00"`;
   const jamKosong = `00j 00m 00d`;
   const clockKosong = `00:00:00`;
 
+  // diketahui
+  const [lintang, setLintang] = useState<string>("lintang utara");
+  const [bujur, setBujur] = useState<string>("bujur barat");
+  const [daerah, setDaerah] = useState<string>("bAceh");
+
+  // Keterangan
+  const [tanggalKet, setTanggalKet] = useState<any>(1);
+  const [bulanKet, setBulanKet] = useState<any>(1);
+
+  // koordinat
+  const [lintangDerajat, setLintangDerajat] = useState<string>("00");
+  const [lintangMenit, setLintangMenit] = useState<string>("00");
+  const [lintangDetik, setLintangDetik] = useState<string>("00");
+  const [bujurDerajat, setBujurDerajat] = useState<string>("00");
+  const [bujurMenit, setBujurMenit] = useState<string>("00");
+  const [bujurDetik, setBujurDetik] = useState<string>("00");
+
+  // daerah
+  const [bujurDaerah, setBujurDaerah] = useState<string>(derajatKosong);
+  const [lintangDaerah, setLintangDaerah] = useState<string>(derajatKosong);
+
+  const lintangDerajatDaerah = convertToDerajat(
+    getValueArray(daerahArray.find((item) => item.value === daerah)?.lintang)
+  ).derajat;
+  const lintangMenitDaerah = getValuePartial(
+    convertToDerajat(
+      getValueArray(daerahArray.find((item) => item.value === daerah)?.lintang)
+    ).menit
+  );
+  const lintangDetikDaerah = getValuePartial(
+    convertToDerajat(
+      getValueArray(daerahArray.find((item) => item.value === daerah)?.lintang)
+    ).detik
+  );
+  const bujurDerajatDaerah = getValuePartial(
+    convertToDerajat(
+      getValueArray(daerahArray.find((item) => item.value === daerah)?.bujur)
+    ).derajat
+  );
+  const bujurMenitDaerah = getValuePartial(
+    convertToDerajat(
+      getValueArray(daerahArray.find((item) => item.value === daerah)?.bujur)
+    ).menit
+  );
+  const bujurDetikDaerah = getValuePartial(
+    convertToDerajat(
+      getValueArray(daerahArray.find((item) => item.value === daerah)?.bujur)
+    ).detik
+  );
+
+  const dekDerajat = Number(deklinasiArray[bulanKet][tanggalKet][0]);
+  const dekMenit = Number(deklinasiArray[bulanKet][tanggalKet][1]);
+  const dekDetik = Number(deklinasiArray[bulanKet][tanggalKet][2]);
+  const eqtMenit = Number(equationArray[bulanKet][tanggalKet][0]);
+  const eqtDetik = Number(equationArray[bulanKet][tanggalKet][1]);
+  const desDek = convertToDecimal(dekDerajat, dekMenit, dekDetik);
+  const desEqt = convertToDecimal(0, eqtMenit, eqtDetik);
+
+  const deklinasiMatahari = `${dekDerajat}° ${dekMenit}' ${dekDetik}"`;
+  const equationOfTime = `${eqtMenit}m ${eqtDetik}d`;
+  const [bwdDerajat, setBwdDerajat] = useState<string>("00");
+  const [bujurWaktuDaerah, setBujurWaktuDaerah] = useState(derajatKosong);
+
+  // boolean
+  const [onOpenLintang, setOnOpenLintang] = useState<boolean>();
+  const [onOpenBujur, setOnOpenBujur] = useState<boolean>();
+
+  // boolean jawaban
+  const [isJawaban, setIsJawaban] = useState<boolean>(false);
+  const [isCalculate, setIsCalculate] = useState<boolean>(false);
+
   const [hasilInter1, setHasilInter1] = useState<string>(derajatKosong);
   const [hasilInter, setHasilInter] = useState<string>(derajatKosong);
-  const [bwdDerajat, setBwdDerajat] = useState<string>("0");
   const [hasilMP, setHasilMP] = useState<string>("0");
   const [minusCotan, setMinusCotan] = useState<string>("0");
   const [cotanHashar, setCotanHashar] = useState<number>(0);
@@ -264,72 +371,31 @@ const KiblatBayanganPage = () => {
   const [tSubuh, setTSubuh] = useState<number>(0);
   const [tSubuh15, setTSubuh15] = useState<string>(jamKosong);
 
-  const [cosTImsya, setCosTImsya] = useState<number>(0);
-  const [tImsya, setTImsya] = useState<number>(0);
-  const [tImsya15, setTImsya15] = useState<string>(jamKosong);
-
   const [cosTDhuha, setCosTDhuha] = useState<number>(0);
   const [tDhuha, setTDhuha] = useState<number>(0);
   const [tDhuha15, setTDhuha15] = useState<string>(jamKosong);
 
   const [ikhtiyatDzuhur, setIkhtiyatDzuhur] = useState<string>("0");
-  const [ikhtiyatiDzuhur, setIkhtiyatiDzuhur] = useState<string>("0");
+  const [ikhtiyatiDzuhur, setIkhtiyatiDzuhur] = useState<string>(clockKosong);
   const [ikhtiyatAshar, setIkhtiyatAshar] = useState<string>("0");
-  const [ikhtiyatiAshar, setIkhtiyatiAshar] = useState<string>("0");
+  const [ikhtiyatiAshar, setIkhtiyatiAshar] = useState<string>(clockKosong);
   const [ikhtiyatMaghrib, setIkhtiyatMaghrib] = useState<string>("0");
-  const [ikhtiyatiMaghrib, setIkhtiyatiMaghrib] = useState<string>("0");
+  const [ikhtiyatiMaghrib, setIkhtiyatiMaghrib] = useState<string>(clockKosong);
   const [ikhtiyatIsya, setIkhtiyatIsya] = useState<string>("0");
-  const [ikhtiyatiIsya, setIkhtiyatiIsya] = useState<string>("0");
+  const [ikhtiyatiIsya, setIkhtiyatiIsya] = useState<string>(clockKosong);
   const [ikhtiyatSubuh, setIkhtiyatSubuh] = useState<string>("0");
-  const [ikhtiyatiSubuh, setIkhtiyatiSubuh] = useState<string>("0");
-  const [ikhtiyatImsya, setIkhtiyatImsya] = useState<string>("0");
-  const [ikhtiyatiImsya, setIkhtiyatiImsya] = useState<string>("0");
+  const [ikhtiyatiSubuh, setIkhtiyatiSubuh] = useState<string>(clockKosong);
+  const [ikhtiyatiImsya, setIkhtiyatiImsya] = useState<string>(clockKosong);
   const [ikhtiyatTerbit, setIkhtiyatTerbit] = useState<string>("0");
-  const [ikhtiyatiTerbit, setIkhtiyatiTerbit] = useState<string>("0");
+  const [ikhtiyatiTerbit, setIkhtiyatiTerbit] = useState<string>(clockKosong);
   const [ikhtiyatDhuha, setIkhtiyatDhuha] = useState<string>("0");
-  const [ikhtiyatiDhuha, setIkhtiyatiDhuha] = useState<string>("0");
-
-  const lintangDaerah =
-    lintang === "lintang selatan"
-      ? `-${lintangDerajat}° ${lintangMenit}' ${lintangDetik}"`
-      : `${lintangDerajat}° ${lintangMenit}' ${lintangDetik}"`;
-  const bujurDaerah =
-    bujur === "bujur barat"
-      ? `-${bujurDerajat}° ${bujurMenit}' ${bujurDetik}"`
-      : `${bujurDerajat}° ${bujurMenit}' ${bujurDetik}"`;
-  const deklinasiMatahari = isDekMinus
-    ? `-${dekDerajat}° ${dekMenit}' ${dekDetik}"`
-    : `${dekDerajat}° ${dekMenit}' ${dekDetik}"`;
-  const equationOfTime = isEqtMinus
-    ? `-${eqtDerajat}j ${eqtMenit}m ${eqtDetik}d`
-    : `${eqtDerajat}j ${eqtMenit}m ${eqtDetik}d`;
-  const bujurWaktuDaerah = `${bwdDerajat}°`;
-  const getTanggal = (date: any) => {
-    if (date) {
-      const hari = hariCollection[date.getDay()];
-      const tanggal = date.getDate();
-      const bulan = bulanCollection[date.getMonth()];
-      const tahun = date.getFullYear();
-      return hari + ", " + tanggal + " " + bulan + " " + tahun;
-    } else {
-      const hari = hariCollection[new Date().getDay()];
-      const tanggal = new Date().getDate();
-      const bulan = bulanCollection[new Date().getMonth()];
-      const tahun = new Date().getFullYear();
-      return hari + ", " + tanggal + " " + bulan + " " + tahun;
-    }
-  };
-  const triggerTanggal = getTanggal(tanggal);
+  const [ikhtiyatiDhuha, setIkhtiyatiDhuha] = useState<string>(clockKosong);
 
   const handelPartialDerajat = (inputValue: string, p: string) => {
     if (p === "lintang") {
       setLintangDerajat(inputValue);
     } else if (p === "bujur") {
       setBujurDerajat(inputValue);
-    } else if (p === "dek") {
-      setDekDerajat(inputValue);
-    } else if (p === "eqt") {
-      setEqtDerajat(inputValue);
     } else if (p === "bwd") {
       setBwdDerajat(inputValue);
     }
@@ -339,10 +405,6 @@ const KiblatBayanganPage = () => {
       setLintangMenit(inputValue);
     } else if (p === "bujur") {
       setBujurMenit(inputValue);
-    } else if (p === "dek") {
-      setDekMenit(inputValue);
-    } else if (p === "eqt") {
-      setEqtMenit(inputValue);
     }
   };
   const handelPartialDetik = (inputValue: string, p: string) => {
@@ -350,10 +412,6 @@ const KiblatBayanganPage = () => {
       setLintangDetik(inputValue);
     } else if (p === "bujur") {
       setBujurDetik(inputValue);
-    } else if (p === "dek") {
-      setDekDetik(inputValue);
-    } else if (p === "eqt") {
-      setEqtDetik(inputValue);
     }
   };
 
@@ -387,8 +445,8 @@ const KiblatBayanganPage = () => {
     }
   };
   const handleMenit = (inputValue: string, maxLength: number, p: string) => {
-    if (inputValue.length > maxLength) {
-      const truncatedValue = inputValue.slice(0, maxLength);
+    if (inputValue.length > 2) {
+      const truncatedValue = inputValue.slice(0, 2);
 
       if (parseFloat(truncatedValue) > 60) {
         handlePartial("60", p, "menit");
@@ -402,12 +460,11 @@ const KiblatBayanganPage = () => {
       handlePartial(inputValue, p, "menit");
     }
   };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     maxLength: number,
     pos: "derajat" | "menit" | "detik",
-    p: "lintang" | "bujur" | "kiblat" | "dek" | "eqt" | "bwd"
+    p: "lintang" | "bujur" | "bwd"
   ) => {
     let inputValue = e.target.value;
 
@@ -439,80 +496,126 @@ const KiblatBayanganPage = () => {
 
   const resetValue = () => {
     setIsJawaban(false);
-    setBujurDerajat("0");
-    setBujurMenit("0");
-    setBujurDetik("0");
-    setLintangDerajat("0");
-    setLintangMenit("0");
-    setLintangDetik("0");
-    setDekDerajat("0");
-    setDekMenit("0");
-    setDekDetik("0");
-    setEqtDerajat("0");
-    setEqtMenit("0");
-    setEqtDetik("0");
-    setBwdDerajat("0");
-    setIsEqtMinus(false);
-    setIsDekMinus(false);
+    setIsCalculate(false);
+    setBujurDerajat("000");
+    setBujurMenit("00");
+    setBujurDetik("00");
+    setLintangDerajat("000");
+    setLintangMenit("00");
+    setLintangDetik("00");
+    setBwdDerajat("00");
+    setIkhtiyatiImsya(clockKosong);
+    setIkhtiyatiSubuh(clockKosong);
+    setIkhtiyatiTerbit(clockKosong);
+    setIkhtiyatiDhuha(clockKosong);
+    setIkhtiyatiDzuhur(clockKosong);
+    setIkhtiyatiAshar(clockKosong);
+    setIkhtiyatiMaghrib(clockKosong);
+    setIkhtiyatiIsya(clockKosong);
   };
 
-  const calculate = () => {
-    setIsJawaban(true);
-    let desEQT = convertToDecimal(
-      parseFloat(eqtDerajat),
-      parseFloat(eqtMenit),
-      parseFloat(eqtDetik)
-    );
-    let desMP = 12 - (isEqtMinus ? -parseFloat(desEQT) : parseFloat(desEQT));
+  const calculate = (a: "daerah" | "koordinat") => {
+    // diket - lintang
+    const derLK =
+      lintang === "lintang selatan"
+        ? `-${lintangDerajat}° ${lintangMenit}' ${lintangDetik}"`
+        : `${lintangDerajat}° ${lintangMenit}' ${lintangDetik}"`;
+    const derLD = `${Math.abs(
+      lintangDerajatDaerah
+    )}° ${lintangMenitDaerah}' ${lintangDetikDaerah}"`;
+    const derLintang = a === "daerah" ? derLD : derLK;
+    setLintangDaerah(derLintang);
+    if (lintangDerajatDaerah.toString().startsWith("-")) {
+      setLintang("lintang selatan");
+    } else {
+      setLintang("lintang utara");
+    }
 
-    setHasilMP(
-      `${convertToDerajat(desMP)}j ${convertToMenit(desMP)}m ${parseFloat(
-        convertToDetik(desMP).toFixed(2)
-      )}d`
+    // diket - lintang - decimal
+    const desLK =
+      lintang === "lintang selatan"
+        ? -convertToDecimal(
+            parseFloat(lintangDerajat),
+            parseFloat(lintangMenit),
+            parseFloat(lintangDetik)
+          )
+        : convertToDecimal(
+            parseFloat(lintangDerajat),
+            parseFloat(lintangMenit),
+            parseFloat(lintangDetik)
+          );
+    const desLD = getValueArray(
+      daerahArray.find((item) => item.value === daerah)?.lintang
     );
-    let desBujurDaerah = convertToDecimal(
-      parseFloat(bujurDerajat),
-      parseFloat(bujurMenit),
-      parseFloat(bujurDetik)
+    const desLintang = a === "daerah" ? desLD : desLK;
+
+    // diket - bujur - derajat
+    const derBK =
+      bujur === "bujur barat"
+        ? `-${bujurDerajat}° ${bujurMenit}' ${bujurDetik}"`
+        : `${bujurDerajat}° ${bujurMenit}' ${bujurDetik}"`;
+    const derBD = `${bujurDerajatDaerah}° ${bujurMenitDaerah}' ${bujurDetikDaerah}"`;
+    const derBujur = a === "daerah" ? derBD : derBK;
+    setBujurDaerah(derBujur);
+    if (bujurDerajatDaerah.toString().startsWith("-")) {
+      setBujur("bujur barat");
+    } else {
+      setBujur("bujur timur");
+    }
+
+    // diket - bujur - decimal
+    const desBK =
+      bujur === "bujur barat"
+        ? -convertToDecimal(
+            parseFloat(bujurDerajat),
+            parseFloat(bujurMenit),
+            parseFloat(bujurDetik)
+          )
+        : convertToDecimal(
+            parseFloat(bujurDerajat),
+            parseFloat(bujurMenit),
+            parseFloat(bujurDetik)
+          );
+    const desBD = getValueArray(
+      daerahArray.find((item) => item.value === daerah)?.bujur
     );
-    let inter1 =
-      (bujur === "bujur barat"
-        ? -parseFloat(desBujurDaerah)
-        : parseFloat(desBujurDaerah)) - 105;
+    const desBujur = a === "daerah" ? desBD : desBK;
+
+    // diket - bwd - desimal
+    const desBWD =
+      a === "daerah"
+        ? daerahArray.find((item) => item.value === daerah)?.bwd ?? 0
+        : parseFloat(bwdDerajat);
+    setBujurWaktuDaerah(`${desBWD}°`);
+
+    // hitung"
+    let desMP = 12 - desEqt;
+    const derMP = convertToDerajat(desMP);
+    setHasilMP(`${derMP.derajat}j ${derMP.menit}m ${derMP.detik}d`);
+    let inter1 = desBujur - desBWD;
+    const derInter1 = convertToDerajat(inter1);
     setHasilInter1(
-      `${convertToDerajat(inter1)}° ${convertToMenit(inter1)}' ${parseFloat(
-        convertToDetik(inter1).toFixed(2)
-      )}"`
+      `${derInter1.derajat}° ${derInter1.menit}' ${derInter1.detik}"`
     );
-
     const desHasilInter = inter1 / 15;
-    const resultInter = `${convertToDerajat(desHasilInter)}j ${convertToMenit(
-      desHasilInter
-    )}m ${parseFloat(convertToDetik(desHasilInter).toFixed(2))}d`;
-    setHasilInter(resultInter);
+    const derHI = convertToDerajat(desHasilInter);
+    setHasilInter(`${derHI.derajat}j ${derHI.menit}m ${derHI.detik}d`);
+    console.log(
+      "hitung-1:",
+      desMP,
+      "|",
+      inter1,
+      "|",
+      derInter1,
+      "|",
+      desHasilInter,
+      "|",
+      derHI
+    );
 
-    const desLintang = parseFloat(
-      convertToDecimal(
-        parseFloat(lintangDerajat),
-        parseFloat(lintangMenit),
-        parseFloat(lintangDetik)
-      )
-    );
-    const desDek = parseFloat(
-      convertToDecimal(
-        parseFloat(dekDerajat),
-        parseFloat(dekMenit),
-        parseFloat(dekDetik)
-      )
-    );
-    const hasilMinusCotan =
-      (lintang === "lintang selatan" ? -desLintang : desLintang) -
-      (isDekMinus ? -desDek : desDek);
-    setMinusCotan(
-      `${convertToDerajat(hasilMinusCotan)}° ${convertToMenit(
-        hasilMinusCotan
-      )}' ${parseFloat(convertToDetik(hasilMinusCotan).toFixed(2))}"`
-    );
+    const hasilMinusCotan = desLintang - desDek;
+    const derHMC = convertToDerajat(hasilMinusCotan);
+    setMinusCotan(`${derHMC.derajat}° ${derHMC.menit}' ${derHMC.detik}"`);
     const hasilCotanH = convertTan(hasilMinusCotan);
     setCotanHashar(parseFloat(hasilCotanH.toFixed(9)));
     const hasilPlusCotanH = hasilCotanH + 1;
@@ -521,480 +624,324 @@ const KiblatBayanganPage = () => {
     setTanH(parseFloat(hasilTanH.toFixed(9)));
     const hasilhAshar = convertFromTan(hasilTanH);
     setHAshar(parseFloat(hasilhAshar.toFixed(9)));
-    const hasilDerHAshar = `${convertToDerajat(hasilhAshar)}° ${convertToMenit(
-      hasilhAshar
-    )}' ${parseFloat(convertToDetik(hasilhAshar).toFixed(2))}"`;
+    const derHHA = convertToDerajat(hasilhAshar);
+    const hasilDerHAshar = `${derHHA.derajat}° ${derHHA.menit}' ${derHHA.detik}"`;
     setDerHAshar(hasilDerHAshar);
 
-    const hasilCosTAshar =
-      -convertTan(desLintang) * convertTan(desDek) +
-      convertSin(hasilhAshar) / convertCos(desLintang) / convertCos(desDek);
-    setCosTAshar(parseFloat(hasilCosTAshar.toFixed(9)));
-    const hasilTAshar = convertFromCos(hasilCosTAshar);
-    setTAshar(parseFloat(hasilTAshar.toFixed(9)));
-    const hasilTAshar15 = hasilTAshar / 15;
-    setTAshar15(
-      `${convertToDerajat(hasilTAshar15)}j ${convertToMenit(
-        hasilTAshar15
-      )}m ${parseFloat(convertToDetik(hasilTAshar15).toFixed(2))}d`
+    const hasilTAshar15 = ikhtiyatResult(
+      desLintang,
+      desDek,
+      hasilhAshar,
+      setCosTAshar,
+      setTAshar,
+      setTAshar15
     );
 
-    const hasilCosTMaghribTerbit =
-      -convertTan(desLintang) * convertTan(desDek) +
-      convertSin(-1) / convertCos(desLintang) / convertCos(desDek);
-    setCosTMaghribTerbit(parseFloat(hasilCosTMaghribTerbit.toFixed(9)));
-    const hasilTMaghribTerbit = convertFromCos(hasilCosTMaghribTerbit);
-    setTMaghribTerbit(parseFloat(hasilTMaghribTerbit.toFixed(9)));
-    const hasilTMaghribTerbit15 = hasilTMaghribTerbit / 15;
-    setTMaghribTerbit15(
-      `${convertToDerajat(hasilTMaghribTerbit15)}j ${convertToMenit(
-        hasilTMaghribTerbit15
-      )}m ${parseFloat(convertToDetik(hasilTMaghribTerbit15).toFixed(2))}d`
+    const hasilTMaghribTerbit15 = ikhtiyatResult(
+      desLintang,
+      desDek,
+      -1,
+      setCosTMaghribTerbit,
+      setTMaghribTerbit,
+      setTMaghribTerbit15
     );
 
-    const hasilCosTIsya =
-      -convertTan(desLintang) * convertTan(desDek) +
-      convertSin(-18) / convertCos(desLintang) / convertCos(desDek);
-    setCosTIsya(parseFloat(hasilCosTIsya.toFixed(9)));
-    const hasilTIsya = convertFromCos(hasilCosTIsya);
-    setTIsya(parseFloat(hasilTIsya.toFixed(9)));
-    const hasilTIsya15 = hasilTIsya / 15;
-    setTIsya15(
-      `${convertToDerajat(hasilTIsya15)}j ${convertToMenit(
-        hasilTIsya15
-      )}m ${parseFloat(convertToDetik(hasilTIsya15).toFixed(2))}d`
+    const hasilTIsya15 = ikhtiyatResult(
+      desLintang,
+      desDek,
+      -18,
+      setCosTIsya,
+      setTIsya,
+      setTIsya15
     );
 
-    const hasilCosTSubuh =
-      -convertTan(desLintang) * convertTan(desDek) +
-      convertSin(-20) / convertCos(desLintang) / convertCos(desDek);
-    setCosTSubuh(parseFloat(hasilCosTSubuh.toFixed(9)));
-    const hasilTSubuh = convertFromCos(hasilCosTSubuh);
-    setTSubuh(parseFloat(hasilTSubuh.toFixed(9)));
-    const hasilTSubuh15 = hasilTSubuh / 15;
-    setTSubuh15(
-      `${convertToDerajat(hasilTSubuh15)}j ${convertToMenit(
-        hasilTSubuh15
-      )}m ${parseFloat(convertToDetik(hasilTSubuh15).toFixed(2))}d`
+    const hasilTSubuh15 = ikhtiyatResult(
+      desLintang,
+      desDek,
+      -20,
+      setCosTSubuh,
+      setTSubuh,
+      setTSubuh15
     );
 
-    const hasilCosTImsya =
-      -convertTan(desLintang) * convertTan(desDek) +
-      convertSin(-22) / convertCos(desLintang) / convertCos(desDek);
-    setCosTImsya(parseFloat(hasilCosTImsya.toFixed(9)));
-    const hasilTImsya = convertFromCos(hasilCosTImsya);
-    setTImsya(parseFloat(hasilTImsya.toFixed(9)));
-    const hasilTImsya15 = hasilTImsya / 15;
-    setTImsya15(
-      `${convertToDerajat(hasilTImsya15)}j ${convertToMenit(
-        hasilTImsya15
-      )}m ${parseFloat(convertToDetik(hasilTImsya15).toFixed(2))}d`
+    const hasilTDhuha15 = ikhtiyatResult(
+      desLintang,
+      desDek,
+      convertToDecimal(4, 30, 0),
+      setCosTDhuha,
+      setTDhuha,
+      setTDhuha15
     );
 
-    const hasilCosTDhuha =
-      -convertTan(desLintang) * convertTan(desDek) +
-      convertSin(parseFloat(convertToDecimal(3, 30, 0))) /
-        convertCos(desLintang) /
-        convertCos(desDek);
-    setCosTDhuha(parseFloat(hasilCosTDhuha.toFixed(9)));
-    const hasilTDhuha = convertFromCos(hasilCosTDhuha);
-    setTDhuha(parseFloat(hasilTDhuha.toFixed(9)));
-    const hasilTDhuha15 = hasilTDhuha / 15;
-    setTDhuha15(
-      `${convertToDerajat(hasilTDhuha15)}j ${convertToMenit(
-        hasilTDhuha15
-      )}m ${parseFloat(convertToDetik(hasilTDhuha15).toFixed(2))}d`
+    ikhtiyatiResult(
+      desMP,
+      desHasilInter,
+      0,
+      setIkhtiyatDzuhur,
+      setIkhtiyatiDzuhur,
+      "dzuhur"
+    );
+    ikhtiyatiResult(
+      desMP,
+      desHasilInter,
+      hasilTAshar15,
+      setIkhtiyatAshar,
+      setIkhtiyatiAshar,
+      "ashar"
+    );
+    ikhtiyatiResult(
+      desMP,
+      desHasilInter,
+      hasilTMaghribTerbit15,
+      setIkhtiyatMaghrib,
+      setIkhtiyatiMaghrib,
+      "maghrib"
+    );
+    ikhtiyatiResult(
+      desMP,
+      desHasilInter,
+      hasilTIsya15,
+      setIkhtiyatIsya,
+      setIkhtiyatiIsya,
+      "isya"
+    );
+    ikhtiyatiResultImsakSubuh(
+      desMP,
+      desHasilInter,
+      hasilTSubuh15,
+      setIkhtiyatiSubuh,
+      setIkhtiyatiImsya,
+      setIkhtiyatSubuh
     );
 
-    const mpInterDzuhur = desMP - desHasilInter;
-    const detMpInterDzuhur = convertToDetik(mpInterDzuhur);
-    const ikhtiyatiDetikDzuhur =
-      detMpInterDzuhur !== 0 ? 60 - detMpInterDzuhur : 0;
-    const ikhtiyatiMenitDzuhur = detMpInterDzuhur !== 0 ? 1 : 2;
-    const varIkhtiyatDzuhur = `00j ${ikhtiyatiMenitDzuhur}m ${parseFloat(
-      ikhtiyatiDetikDzuhur.toFixed(2)
-    )}d`;
-    setIkhtiyatDzuhur(varIkhtiyatDzuhur);
-    setIkhtiyatiDzuhur(
-      `${convertToDerajat(mpInterDzuhur)}j ${
-        convertToMenit(mpInterDzuhur) + 2
-      }m 00d`
+    ikhtiyatiResult(
+      desMP,
+      desHasilInter,
+      hasilTMaghribTerbit15,
+      setIkhtiyatTerbit,
+      setIkhtiyatiTerbit,
+      "terbit"
+    );
+    ikhtiyatiResult(
+      desMP,
+      desHasilInter,
+      hasilTDhuha15,
+      setIkhtiyatDhuha,
+      setIkhtiyatiDhuha,
+      "dhuha"
     );
 
-    const mpInterAshar = desMP + hasilTAshar15 - desHasilInter;
-    const detMpInterAshar = convertToDetik(mpInterAshar);
-    const ikhtiyatiDetikAshar =
-      detMpInterAshar !== 0 ? 60 - detMpInterAshar : 0;
-    const ikhtiyatiMenitAshar = detMpInterAshar !== 0 ? 1 : 2;
-    const varIkhtiyatAshar = `00j ${ikhtiyatiMenitAshar}m ${parseFloat(
-      ikhtiyatiDetikAshar.toFixed(2)
-    )}d`;
-    setIkhtiyatAshar(varIkhtiyatAshar);
-    setIkhtiyatiAshar(
-      `${convertToDerajat(mpInterAshar)}j ${
-        convertToMenit(mpInterAshar) + 2
-      }m 00d`
-    );
-
-    const mpInterMaghrib = desMP + hasilTMaghribTerbit15 - desHasilInter;
-    const detMpInterMaghrib = convertToDetik(mpInterMaghrib);
-    const ikhtiyatiDetikMaghrib =
-      detMpInterMaghrib !== 0 ? 60 - detMpInterMaghrib : 0;
-    const ikhtiyatiMenitMaghrib = detMpInterMaghrib !== 0 ? 1 : 2;
-    const varIkhtiyatMaghrib = `00j ${ikhtiyatiMenitMaghrib}m ${parseFloat(
-      ikhtiyatiDetikMaghrib.toFixed(2)
-    )}d`;
-    setIkhtiyatMaghrib(varIkhtiyatMaghrib);
-    setIkhtiyatiMaghrib(
-      `${convertToDerajat(mpInterMaghrib)}j ${
-        convertToMenit(mpInterMaghrib) + 2
-      }m 00d`
-    );
-
-    const mpInterIsya = desMP + hasilTIsya15 - desHasilInter;
-    const detMpInterIsya = convertToDetik(mpInterIsya);
-    const ikhtiyatiDetikIsya = detMpInterIsya !== 0 ? 60 - detMpInterIsya : 0;
-    const ikhtiyatiMenitIsya = detMpInterIsya !== 0 ? 1 : 2;
-    const varIkhtiyatIsya = `00j ${ikhtiyatiMenitIsya}m ${parseFloat(
-      ikhtiyatiDetikIsya.toFixed(2)
-    )}d`;
-    setIkhtiyatIsya(varIkhtiyatIsya);
-    setIkhtiyatiIsya(
-      `${convertToDerajat(mpInterIsya)}j ${
-        convertToMenit(mpInterIsya) + 2
-      }m 00d`
-    );
-
-    const mpInterSubuh = desMP - hasilTSubuh15 - desHasilInter;
-    const detMpInterSubuh = convertToDetik(mpInterSubuh);
-    const ikhtiyatiDetikSubuh =
-      detMpInterSubuh !== 0 ? 60 - detMpInterSubuh : 0;
-    const ikhtiyatiMenitSubuh = detMpInterSubuh !== 0 ? 1 : 2;
-    const varIkhtiyatSubuh = `00j ${ikhtiyatiMenitSubuh}m ${parseFloat(
-      ikhtiyatiDetikSubuh.toFixed(2)
-    )}d`;
-    setIkhtiyatSubuh(varIkhtiyatSubuh);
-    setIkhtiyatiSubuh(
-      `${convertToDerajat(mpInterSubuh)}j ${
-        convertToMenit(mpInterSubuh) + 2
-      }m 00d`
-    );
-
-    const mpInterImsya = desMP - hasilTImsya15 - desHasilInter;
-    const detMpInterImsya = convertToDetik(mpInterImsya);
-    const ikhtiyatiDetikImsya =
-      detMpInterImsya !== 0 ? 60 - detMpInterImsya : 0;
-    const ikhtiyatiMenitImsya = detMpInterImsya !== 0 ? 1 : 2;
-    const varIkhtiyatImsya = `00j ${ikhtiyatiMenitImsya}m ${parseFloat(
-      ikhtiyatiDetikImsya.toFixed(2)
-    )}d`;
-    setIkhtiyatImsya(varIkhtiyatImsya);
-    setIkhtiyatiImsya(
-      `${convertToDerajat(mpInterImsya)}j ${
-        convertToMenit(mpInterImsya) - 1
-      }m 00d`
-    );
-
-    const mpInterTerbit = desMP - hasilTMaghribTerbit15 - desHasilInter;
-    const detMpInterTerbit = convertToDetik(mpInterTerbit);
-    const ikhtiyatiDetikTerbit =
-      detMpInterTerbit !== 0 ? 60 - detMpInterTerbit : 0;
-    const ikhtiyatiMenitTerbit = detMpInterTerbit !== 0 ? 1 : 2;
-    const varIkhtiyatTerbit = `00j ${ikhtiyatiMenitTerbit}m ${parseFloat(
-      ikhtiyatiDetikTerbit.toFixed(2)
-    )}d`;
-    setIkhtiyatTerbit(varIkhtiyatTerbit);
-    setIkhtiyatiTerbit(
-      `${convertToDerajat(mpInterTerbit)}j ${
-        convertToMenit(mpInterTerbit) - 1
-      }m 00d`
-    );
-    // ----------------------------------------------------------------
-    // .
-    // Rumus Ikhtiyati Dhuha
-    // .
-    // ----------------------------------------------------------------
-    const mpInterDhuha = desMP - hasilTDhuha15 - desHasilInter;
-    const detMpInterDhuha = convertToDetik(mpInterDhuha);
-    const ikhtiyatiDetikDhuha =
-      detMpInterDhuha !== 0 ? 60 - detMpInterDhuha : 0;
-    const ikhtiyatiMenitDhuha = detMpInterDhuha !== 0 ? 1 : 2;
-    const varIkhtiyatDhuha = `00j ${ikhtiyatiMenitDhuha}m ${parseFloat(
-      ikhtiyatiDetikDhuha.toFixed(2)
-    )}d`;
-    setIkhtiyatDhuha(varIkhtiyatDhuha);
-    setIkhtiyatiDhuha(
-      `${convertToDerajat(mpInterDhuha)}j ${
-        convertToMenit(mpInterDhuha) + 2
-      }m 00d`
-    );
+    setIsCalculate(true);
   };
 
+  const getClass1 = (a: boolean) => {
+    return a ? "w-[70px] transition-all" : "w-14 transition-all";
+  };
   return (
-    <div className="w-full h-full pb-20 pt-10 sm:py-32 flex flex-col justify-center items-center">
-      <h1 className="font-semibold text-xl">Arah Kiblat Bayangan</h1>
-      <div className="flex flex-col gap-y-8 w-full lg:w-[800px] items-center mt-4 border border-border p-8 overflow-hidden rounded-md">
-        <div className="flex flex-col">
-          <Label className="mb-2">Koordinat Daerah/Tempat</Label>
-          <div className="flex flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
-            <div className="flex gap-x-2 items-center">
-              <div className="w-14 flex border rounded-md box-content pr-1">
-                <Input
-                  className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                  value={lintangDerajat}
-                  onChange={(e) => handleChange(e, 3, "derajat", "lintang")}
-                  type="number"
-                />
-                °
-              </div>
-              <div className="w-12 flex border rounded-md box-content pr-1">
-                <Input
-                  className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                  value={lintangMenit}
-                  onChange={(e) => handleChange(e, 2, "menit", "lintang")}
-                  type="number"
-                />
-                &apos;
-              </div>
-              <div className="w-20 flex border rounded-md box-content pr-1">
-                <Input
-                  className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                  value={lintangDetik}
-                  onChange={(e) => handleChange(e, 5, "detik", "lintang")}
-                  type="number"
-                />
-                &quot;
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button className="px-3 w-20 flex justify-between">
-                    {lintangArray.find((item) => item.value === lintang)?.name}
-                    <ChevronDown className="ml-2 h-4 w-4 -mr-1 animate-accordion-up" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0  w-20" align="start">
-                  <Command>
-                    <CommandGroup>
-                      {lintangArray.map((item) => (
-                        <CommandItem
-                          key={item.value}
-                          className="h-10"
-                          onSelect={() => setLintang(item.value)}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === lintang
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.name}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="flex gap-x-2 items-center">
-              <div className="w-14 flex border rounded-md box-content pr-1">
-                <Input
-                  className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                  value={bujurDerajat}
-                  onChange={(e) => handleChange(e, 3, "derajat", "bujur")}
-                  type="number"
-                />
-                °
-              </div>
-              <div className="w-12 flex border rounded-md box-content pr-1">
-                <Input
-                  className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                  value={bujurMenit}
-                  onChange={(e) => handleChange(e, 2, "menit", "bujur")}
-                  type="number"
-                />
-                &apos;
-              </div>
-              <div className="w-20 flex border rounded-md box-content pr-1">
-                <Input
-                  className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                  value={bujurDetik}
-                  onChange={(e) => handleChange(e, 5, "detik", "bujur")}
-                  type="number"
-                />
-                &quot;
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button className="px-3 w-20 flex justify-between">
-                    {bujurArray.find((item) => item.value === bujur)?.name}
-                    <ChevronDown className="ml-2 h-4 w-4 -mr-1" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0  w-20" align="start">
-                  <Command>
-                    <CommandGroup>
-                      {bujurArray.map((item) => (
-                        <CommandItem
-                          key={item.value}
-                          className="h-10"
-                          onSelect={() => setBujur(item.value)}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === bujur ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {item.name}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
+    <div className="w-full h-full pb-20 pt-10 sm:pb-32 flex flex-col justify-center items-center">
+      <h1 className="font-semibold text-xl">Hisab Waktu Sholat</h1>
+      <div className="flex flex-col gap-y-8 w-full items-center mt-4 border border-border justify-center px-8 py-10 overflow-hidden rounded-md">
+        <Tabs defaultValue="koordinat" className="w-full">
+          <div className="w-full justify-center flex items-center">
+            {/* tombol */}
+            <TabsList>
+              <TabsTrigger value="koordinat">Koordinat</TabsTrigger>
+              <TabsTrigger value="daerah">Daerah</TabsTrigger>
+            </TabsList>
           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
-          <div className="flex flex-col gap-y-2">
-            <div className="flex flex-col">
-              <Label className="mb-2">Deklinasi Matahari</Label>
-              <div className="flex gap-x-8">
-                <div className="flex gap-x-2 items-center">
-                  <div className="w-10 h-10 flex justify-center items-center border rounded-md box-content">
-                    {isDekMinus ? (
-                      <Minus className="w-4 h-4" />
-                    ) : (
-                      <Plus className="w-4 h-4" />
-                    )}
+          <TabsContent value="koordinat">
+            {/* koordinat */}
+            <div className="flex w-full justify-center border py-4 mt-10 rounded-md items-center gap-x-4 xl:gap-x-8 sm:gap-y-4">
+              <div className="relative flex flex-col xl:flex-row items-center w-full gap-y-4 xl:gap-y-0 xl:gap-x-8 justify-center">
+                <Label className="mb-2 px-5 absolute -top-6 bg-white text-center">
+                  Koordinat Lokasi
+                </Label>
+                <div className="flex w-full flex-col sm:flex-row justify-center gap-x-2 gap-y-2 items-center py-1 px-3 rounded-md">
+                  <div className="flex gap-x-2">
+                    <div className="w-16 flex focus-within:bg-zinc-100 pr-2 rounded-md box-content">
+                      <Input
+                        className="w-full border-0 bg-transparent focus-visible:bg-transparent mr-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                        value={lintangDerajat}
+                        onChange={(e) =>
+                          handleChange(e, 3, "derajat", "lintang")
+                        }
+                        type="number"
+                      />
+                      °
+                    </div>
+                    <Separator orientation="vertical" className="h-10" />
+                    <div className="w-12 focus-within:bg-zinc-100 rounded-md flex box-content pr-2">
+                      <Input
+                        className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
+                        value={lintangMenit}
+                        onChange={(e) => handleChange(e, 2, "menit", "lintang")}
+                        type="text"
+                      />
+                      &apos;
+                    </div>
+                    <Separator orientation="vertical" className="h-10" />
+                    <div
+                      className={cn(
+                        "flex focus-within:bg-zinc-100 transition-all rounded-md box-content pr-1",
+                        getClass1(lintangDetik.length > 2)
+                      )}
+                    >
+                      <Input
+                        className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
+                        value={lintangDetik}
+                        onChange={(e) => handleChange(e, 5, "detik", "lintang")}
+                        type="number"
+                      />
+                      &quot;
+                    </div>
                   </div>
-                  <div className="w-14 flex border rounded-md box-content pr-1">
-                    <Input
-                      className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                      value={dekDerajat}
-                      onChange={(e) => handleChange(e, 3, "derajat", "dek")}
-                      type="number"
-                    />
-                    °
+                  <Separator
+                    orientation="vertical"
+                    className="h-10 hidden sm:flex"
+                  />
+                  <Popover open={onOpenLintang} onOpenChange={setOnOpenLintang}>
+                    <PopoverTrigger asChild>
+                      <Button className="sm:px-3 px-5 sm:w-20 w-full flex focus-visible:ring-0 focus-visible:bg-zinc-100 focus-visible:ring-offset-0 md:hover:bg-accent md:hover:text-accent-foreground">
+                        <p className="flex-1">
+                          {
+                            lintangArray.find((item) => item.value === lintang)
+                              ?.name
+                          }
+                        </p>
+                        <ChevronDown className="ml-2 h-4 w-4 float-none -mr-1 animate-accordion-up" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="p-0 rounded sm:w-20 w-44"
+                      align="center"
+                    >
+                      <Command>
+                        <CommandGroup>
+                          {lintangArray.map((item) => (
+                            <CommandItem
+                              key={item.value}
+                              className="h-10 rounded-sm"
+                              onSelect={() => {
+                                setLintang(item.value);
+                                setOnOpenLintang(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  item.value === lintang
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {item.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <Separator
+                  orientation="vertical"
+                  className="h-10 hidden xl:flex"
+                />
+                <div className="flex w-full flex-col sm:flex-row justify-center gap-x-2 gap-y-2 items-center py-1 px-3 rounded-md">
+                  <div className="flex gap-x-2">
+                    <div className="w-16 flex focus-within:bg-zinc-100 pr-2 rounded-md box-content">
+                      <Input
+                        className="w-full border-0 bg-transparent focus-visible:bg-transparent mr-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                        value={bujurDerajat}
+                        onChange={(e) => handleChange(e, 3, "derajat", "bujur")}
+                        type="number"
+                      />
+                      °
+                    </div>
+                    <Separator orientation="vertical" className="h-10" />
+                    <div className="w-12 focus-within:bg-zinc-100 rounded-md flex box-content pr-2">
+                      <Input
+                        className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
+                        value={bujurMenit}
+                        onChange={(e) => handleChange(e, 2, "menit", "bujur")}
+                        type="text"
+                      />
+                      &apos;
+                    </div>
+                    <Separator orientation="vertical" className="h-10" />
+                    <div
+                      className={cn(
+                        "flex focus-within:bg-zinc-100 transition-all rounded-md box-content pr-1",
+                        getClass1(bujurDetik.length > 2)
+                      )}
+                    >
+                      <Input
+                        className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
+                        value={bujurDetik}
+                        onChange={(e) => handleChange(e, 5, "detik", "bujur")}
+                        type="number"
+                      />
+                      &quot;
+                    </div>
                   </div>
-                  <div className="w-12 flex border rounded-md box-content pr-1">
-                    <Input
-                      className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                      value={dekMenit}
-                      onChange={(e) => handleChange(e, 2, "menit", "dek")}
-                      type="number"
-                    />
-                    &apos;
-                  </div>
-                  <div className="w-20 flex border rounded-md box-content pr-1">
-                    <Input
-                      className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                      value={dekDetik}
-                      onChange={(e) => handleChange(e, 5, "detik", "dek")}
-                      type="number"
-                    />
-                    &quot;
-                  </div>
+                  <Separator
+                    orientation="vertical"
+                    className="h-10 hidden sm:flex"
+                  />
+                  <Popover open={onOpenBujur} onOpenChange={setOnOpenBujur}>
+                    <PopoverTrigger asChild>
+                      <Button className="sm:px-3 px-5 sm:w-20 w-full flex focus-visible:ring-0 focus-visible:bg-zinc-100 focus-visible:ring-offset-0 md:hover:bg-accent md:hover:text-accent-foreground">
+                        <p className="flex-1">
+                          {
+                            bujurArray.find((item) => item.value === bujur)
+                              ?.name
+                          }
+                        </p>
+                        <ChevronDown className="ml-2 h-4 w-4 float-none -mr-1 animate-accordion-up" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="p-0 rounded sm:w-20 w-44"
+                      align="center"
+                    >
+                      <Command>
+                        <CommandGroup>
+                          {bujurArray.map((item) => (
+                            <CommandItem
+                              key={item.value}
+                              className="h-10 rounded-sm"
+                              onSelect={() => {
+                                setBujur(item.value);
+                                setOnOpenBujur(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  item.value === bujur
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {item.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
-            </div>
-            <div className="flex gap-x-2 items-center">
-              <Switch
-                id="minusEqt"
-                checked={isDekMinus}
-                onCheckedChange={setIsDekMinus}
+              <Separator
+                orientation="vertical"
+                className="h-32 xl:h-10 md:flex hidden"
               />
-              <Label className="text-xs font-light " htmlFor="minusEqt">
-                Check for minus value
-              </Label>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2">
-            <div className="flex flex-col">
-              <Label className="mb-2">Equation of Time</Label>
-              <div className="flex gap-x-8">
-                <div className="flex gap-x-2 items-center">
-                  <div className="w-10 h-10 flex justify-center items-center border rounded-md box-content">
-                    {isEqtMinus ? (
-                      <Minus className="w-4 h-4" />
-                    ) : (
-                      <Plus className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div className="w-14 flex border rounded-md box-content pr-1">
-                    <Input
-                      className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                      value={eqtDerajat}
-                      onChange={(e) => handleChange(e, 3, "derajat", "eqt")}
-                      type="number"
-                    />
-                    <p className="text-xs">j</p>
-                  </div>
-                  <div className="w-14 flex border rounded-md box-content pr-1">
-                    <Input
-                      className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                      value={eqtMenit}
-                      onChange={(e) => handleChange(e, 2, "menit", "eqt")}
-                      type="number"
-                    />
-                    <p className="text-xs">m</p>
-                  </div>
-                  <div className="w-20 flex border rounded-md box-content pr-1">
-                    <Input
-                      className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
-                      value={eqtDetik}
-                      onChange={(e) => handleChange(e, 5, "detik", "eqt")}
-                      type="number"
-                    />
-                    <p className="text-xs">d</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-x-2 items-center">
-              <Switch
-                id="minusEqt"
-                checked={isEqtMinus}
-                onCheckedChange={setIsEqtMinus}
-              />
-              <Label className="text-xs font-light " htmlFor="minusEqt">
-                Check for minus value
-              </Label>
-            </div>
-          </div>
-        </div>
-        <div className="flex w-full sm:w-4/5 flex-col sm:flex-row gap-y-8 sm:gap-y-0 sm:gap-x-8">
-          <div className="flex w-full flex-col">
-            <Label className="mb-2">Bujur Waktu Daerah</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn("w-full pl-3 text-left font-normal")}
-                >
-                  {triggerTanggal}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={tanggal}
-                  onSelect={setTanggal}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="flex flex-col">
-            <Label className="mb-2">Bujur Waktu Daerah</Label>
-            <div className="flex gap-x-8">
-              <div className="flex gap-x-2 items-center">
-                <div className="w-44 flex border rounded-md box-content pr-1">
+              <div className="relative hidden md:flex justify-center xl:w-64 w-96">
+                <Label className="mb-2 px-5  absolute whitespace-nowrap -top-16 bg-white text-center">
+                  Bujur Waktu Daerah
+                </Label>
+                <div className="flex w-24 justify-center focus-within:bg-zinc-100 items-center py-1 px-3 rounded-md">
                   <Input
-                    className="w-full border-0 bg-transparent focus-visible:bg-transparent focus-visible:ring-offset-0 focus-visible:ring-0"
+                    className="w-full border-0 bg-transparent focus-visible:bg-transparent mr-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                     value={bwdDerajat}
                     onChange={(e) => handleChange(e, 3, "derajat", "bwd")}
                     type="number"
@@ -1003,291 +950,934 @@ const KiblatBayanganPage = () => {
                 </div>
               </div>
             </div>
+            <div className="flex w-full justify-center border py-4 mt-8 md:hidden rounded-md items-center gap-x-8 sm:gap-y-4">
+              <div className="relative flex gap-x-8 justify-center">
+                <Label className="mb-2 px-5 whitespace-nowrap absolute -top-6 bg-white text-center">
+                  Bujur Waktu Daerah
+                </Label>
+                <div className="flex w-24 justify-center focus-within:bg-zinc-100 items-center py-1 px-3 rounded-md">
+                  <Input
+                    className="w-full border-0 bg-transparent focus-visible:bg-transparent mr-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                    value={bwdDerajat}
+                    onChange={(e) => handleChange(e, 3, "derajat", "bwd")}
+                    type="number"
+                  />
+                  °
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center w-full relative mt-10">
+              <div className="w-[250px] absolute -top-5 bg-white">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="w-full flex justify-start"
+                      variant={"outline"}
+                    >
+                      <CalendarIcon className="w-4 h-4" />
+                      <p className="flex-1">{`${tanggalKet} ${
+                        bulanCollection[bulanKet - 1]
+                      }`}</p>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 w-[250px]" align="center">
+                    <div className="flex h-[232px]">
+                      <ScrollArea className="w-[169px] px-2 mt-2 h-56">
+                        {bulanArray.map((item) => (
+                          <Button
+                            key={item}
+                            variant={"ghost"}
+                            className="w-full h-7 text-sm last:mb-[196px] rounded-sm snap-start"
+                            onClick={() => {
+                              setBulanKet(parseFloat(item));
+                              setTanggalKet(1);
+                            }}
+                          >
+                            {bulanCollection[parseFloat(item) - 1]}
+                          </Button>
+                        ))}
+                      </ScrollArea>
+                      <Separator orientation="vertical" />
+                      <ScrollArea className="w-20 px-2 mt-2 h-56">
+                        {bulanKet === 2 ? (
+                          <div>
+                            {tanggalArray.slice(0, 28).map((item) => (
+                              <Button
+                                key={item}
+                                variant={"ghost"}
+                                className="w-full h-7 text-sm last:mb-[196px] snap-start"
+                                onClick={() => {
+                                  setTanggalKet(parseFloat(item));
+                                }}
+                              >
+                                {item}
+                              </Button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div>
+                            {bulanKet === 4 ||
+                            bulanKet === 6 ||
+                            bulanKet === 9 ||
+                            bulanKet === 11 ? (
+                              <div>
+                                {tanggalArray.slice(0, 30).map((item) => (
+                                  <Button
+                                    key={item}
+                                    variant={"ghost"}
+                                    className="w-full h-7 text-sm last:mb-[196px] snap-start"
+                                    onClick={() => {
+                                      setTanggalKet(parseFloat(item));
+                                    }}
+                                  >
+                                    {item}
+                                  </Button>
+                                ))}
+                              </div>
+                            ) : (
+                              <div>
+                                {tanggalArray.map((item) => (
+                                  <Button
+                                    key={item}
+                                    variant={"ghost"}
+                                    className="w-full h-7 text-sm last:mb-[196px] snap-start"
+                                    onClick={() => {
+                                      setTanggalKet(parseFloat(item));
+                                    }}
+                                  >
+                                    {item}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </ScrollArea>
+                    </div>
+                    <Separator />
+                    <div className="flex p-2 gap-x-2">
+                      <div className="w-full flex justify-end">
+                        <Button size={"icon"}>OK</Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="flex w-full flex-col md:flex-row justify-center border py-4 rounded-md items-center gap-8">
+                <div className="w-full flex justify-center mt-8 md:mt-0">
+                  <div className="items-start gap-y-2 flex flex-col">
+                    <Label>Deklinasi Matahari</Label>
+                    <div className="flex gap-x-2 items-center rounded-md">
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
+                        {parseFloat(deklinasiArray[bulanKet][tanggalKet][0])
+                          .toString()
+                          .startsWith("-") ? (
+                          <Minus className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          deklinasiArray[bulanKet][tanggalKet][0]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              deklinasiArray[bulanKet][tanggalKet][0]
+                            )}`
+                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][0])}
+                        <p className="absolute -top-0.5 right-1">°</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          deklinasiArray[bulanKet][tanggalKet][1]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              deklinasiArray[bulanKet][tanggalKet][1]
+                            )}`
+                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][1])}
+                        <p className="absolute -top-0.5 right-1">&apos;</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          deklinasiArray[bulanKet][tanggalKet][2]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              deklinasiArray[bulanKet][tanggalKet][2]
+                            )}`
+                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][2])}
+                        <p className="absolute -top-0.5 right-1">&quot;</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Separator className="md:h-14 md:w-[1px] h-[1px] w-3/4 md:mt-4" />
+                <div className="w-full flex justify-center">
+                  <div className="items-start md:items-end gap-y-2 flex flex-col">
+                    <Label>Equation of Time</Label>
+                    <div className="flex gap-x-2 items-center rounded-md">
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
+                        {parseFloat(equationArray[bulanKet][tanggalKet][0])
+                          .toString()
+                          .startsWith("-") ? (
+                          <Minus className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        00
+                        <p className="absolute -top-0.5 right-1">°</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          equationArray[bulanKet][tanggalKet][0]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              equationArray[bulanKet][tanggalKet][0]
+                            )}`
+                          : Math.abs(equationArray[bulanKet][tanggalKet][0])}
+                        <p className="absolute -top-0.5 right-1">&apos;</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          equationArray[bulanKet][tanggalKet][1]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              equationArray[bulanKet][tanggalKet][1]
+                            )}`
+                          : Math.abs(equationArray[bulanKet][tanggalKet][1])}
+                        <p className="absolute -top-0.5 right-1">&quot;</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full flex flex-col gap-y-4 mt-4 sm:gap-y-0 sm:flex-row items-center justify-center">
+              <Button
+                className="lg:w-[600px] w-full sm:mr-[10px]"
+                onClick={() => calculate("koordinat")}
+              >
+                Calculate
+              </Button>
+              <Button
+                size={"icon"}
+                onClick={resetValue}
+                className="w-full sm:w-10"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
+          </TabsContent>
+          <TabsContent value="daerah">
+            {/* daerah */}
+            <div className="flex w-full justify-center border pb-4 pt-8 mt-10 rounded-md items-center gap-x-8 sm:gap-y-4 relative">
+              <div className="max-w-[400px] w-10/12 absolute -top-5 bg-white">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="w-full flex justify-between"
+                      variant={"outline"}
+                    >
+                      <MapPinned className="w-4 h-4" />
+                      <p className="w-3/4 overflow-hidden whitespace-nowrap text-ellipsis">
+                        {`${
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.deskripsi
+                        }, ${
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.nama
+                        }`}
+                      </p>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="p-0 w-[200px] sm:w-[300px] md:w-[400px]"
+                    align="center"
+                  >
+                    <Command>
+                      <CommandInput placeholder="Cari Daerah..." />
+                      <CommandEmpty>Daerah tidak ditemukan.</CommandEmpty>
+                      <CommandGroup>
+                        <ScrollArea className="h-40 snap-y">
+                          {daerahArray.map((item) => (
+                            <HoverCard key={item.value}>
+                              <HoverCardTrigger>
+                                <CommandItem
+                                  className="snap-start"
+                                  value={item.value}
+                                  onSelect={() => setDaerah(item.value)}
+                                >
+                                  {item.nama}
+                                  <CommandShortcut className="text-[10px] flex items-center">
+                                    <p className="whitespace-nowrap overflow-hidden text-ellipsis w-20">
+                                      {item.deskripsi}
+                                    </p>
+                                    <ChevronRight className="w-3 h-3 ml-1" />
+                                  </CommandShortcut>
+                                </CommandItem>
+                              </HoverCardTrigger>
+                              <HoverCardContent side="right" className="w-full">
+                                <div className="space-y-1">
+                                  <h4 className="text-sm font-semibold">
+                                    {`${item.provinsi} `}
+                                    <span className="font-normal text-xs md:text-sm">{`(${item.nama})`}</span>
+                                  </h4>
+                                  <Separator />
+                                  <p className="text-sm font-medium">
+                                    {item.deskripsi}
+                                  </p>
+                                  <p className="text-xs md:text-sm">
+                                    {item.kecamatan}
+                                  </p>
+                                </div>
+                              </HoverCardContent>
+                            </HoverCard>
+                          ))}
+                        </ScrollArea>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="w-full flex flex-col items-center justify-center gap-y-4 text-sm">
+                <div className="flex w-full justify-center gap-x-2 items-center py-1 px-3 rounded-md">
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                    {getValuePartial(
+                      convertToDerajat(
+                        getValueArray(
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.lintang
+                        )
+                      ).derajat
+                    )}
+                    <p className="absolute -top-0.5 right-1">°</p>
+                  </div>
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                    {getValuePartial(
+                      convertToDerajat(
+                        getValueArray(
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.lintang
+                        )
+                      ).menit
+                    )}
+                    <p className="absolute -top-0.5 right-1">&apos;</p>
+                  </div>
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                    {getValuePartial(
+                      convertToDerajat(
+                        getValueArray(
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.lintang
+                        )
+                      ).detik
+                    )}
+                    <p className="absolute -top-0.5 right-1">&quot;</p>
+                  </div>
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center bg-primary  items-center text-primary-foreground border rounded-md box-content relative">
+                    {daerahArray
+                      .find((item) => item.value === daerah)
+                      ?.lintang.toString()
+                      .startsWith("-")
+                      ? "LS"
+                      : "LU"}
+                  </div>
+                </div>
+                <Separator className="md:h-10 md:w-[1px] w-3/4 h-[1px]" />
+                <div className="flex w-full justify-center gap-x-2 items-center py-1 px-3 rounded-md">
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                    {getValuePartial(
+                      convertToDerajat(
+                        getValueArray(
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.bujur
+                        )
+                      ).derajat
+                    )}
+                    <p className="absolute -top-0.5 right-1">°</p>
+                  </div>
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                    {getValuePartial(
+                      convertToDerajat(
+                        getValueArray(
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.bujur
+                        )
+                      ).menit
+                    )}
+                    <p className="absolute -top-0.5 right-1">&apos;</p>
+                  </div>
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                    {getValuePartial(
+                      convertToDerajat(
+                        getValueArray(
+                          daerahArray.find((item) => item.value === daerah)
+                            ?.bujur
+                        )
+                      ).detik
+                    )}
+                    <p className="absolute -top-0.5 right-1">&quot;</p>
+                  </div>
+                  <div className="w-16 h-10 text-xs md:text-sm flex justify-center text-primary-foreground bg-primary items-center border rounded-md box-content relative">
+                    {daerahArray
+                      .find((item) => item.value === daerah)
+                      ?.bujur.toString()
+                      .startsWith("-")
+                      ? "BB"
+                      : "BT"}
+                  </div>
+                </div>
+              </div>
+              <Separator orientation="vertical" className="h-10 hidden" />
+              <div className="relative hidden md:flex justify-center w-44 mr-8">
+                <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                  {daerahArray.find((item) => item.value === daerah)?.bwd}
+                  <p className="absolute -top-0.5 right-1">°</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex w-full justify-center border py-4 mt-8 md:hidden rounded-md items-center gap-x-8 sm:gap-y-4">
+              <div className="relative flex gap-x-8 justify-center">
+                <Label className="mb-2 px-5 whitespace-nowrap absolute -top-6 bg-white text-center">
+                  Bujur Waktu Daerah
+                </Label>
+                <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                  {daerahArray.find((item) => item.value === daerah)?.bwd}
+                  <p className="absolute -top-0.5 right-1">°</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center w-full relative mt-8">
+              <div className="max-w-[250px] w-10/12 absolute -top-5 bg-white">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="w-full flex justify-start"
+                      variant={"outline"}
+                    >
+                      <CalendarIcon className="w-4 h-4" />
+                      <p className="flex-1">{`${tanggalKet} ${
+                        bulanCollection[bulanKet - 1]
+                      }`}</p>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="p-0 w-[200px] md:w-[250px]"
+                    align="center"
+                  >
+                    <div className="flex h-[232px]">
+                      <ScrollArea className="w-[169px] px-2 mt-2 h-56">
+                        {bulanArray.map((item) => (
+                          <Button
+                            key={item}
+                            variant={"ghost"}
+                            className="w-full h-7 text-sm last:mb-[196px] rounded-sm snap-start"
+                            onClick={() => {
+                              setBulanKet(parseFloat(item));
+                              setTanggalKet(1);
+                            }}
+                          >
+                            {bulanCollection[parseFloat(item) - 1]}
+                          </Button>
+                        ))}
+                      </ScrollArea>
+                      <Separator orientation="vertical" />
+                      <ScrollArea className="w-20 px-2 mt-2 h-56">
+                        {bulanKet === 2 ? (
+                          <div>
+                            {tanggalArray.slice(0, 28).map((item) => (
+                              <Button
+                                key={item}
+                                variant={"ghost"}
+                                className="w-full h-7 text-sm last:mb-[196px] snap-start"
+                                onClick={() => {
+                                  setTanggalKet(parseFloat(item));
+                                }}
+                              >
+                                {item}
+                              </Button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div>
+                            {bulanKet === 4 ||
+                            bulanKet === 6 ||
+                            bulanKet === 9 ||
+                            bulanKet === 11 ? (
+                              <div>
+                                {tanggalArray.slice(0, 30).map((item) => (
+                                  <Button
+                                    key={item}
+                                    variant={"ghost"}
+                                    className="w-full h-7 text-sm last:mb-[196px] snap-start"
+                                    onClick={() => {
+                                      setTanggalKet(parseFloat(item));
+                                    }}
+                                  >
+                                    {item}
+                                  </Button>
+                                ))}
+                              </div>
+                            ) : (
+                              <div>
+                                {tanggalArray.map((item) => (
+                                  <Button
+                                    key={item}
+                                    variant={"ghost"}
+                                    className="w-full h-7 text-sm last:mb-[196px] snap-start"
+                                    onClick={() => {
+                                      setTanggalKet(parseFloat(item));
+                                    }}
+                                  >
+                                    {item}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </ScrollArea>
+                    </div>
+                    <Separator />
+                    <div className="flex p-2 gap-x-2">
+                      <div className="w-full flex justify-end">
+                        <Button size={"icon"}>OK</Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="flex w-full flex-col md:flex-row justify-center border py-4 rounded-md items-center gap-x-8 gap-y-4">
+                <div className="w-full flex justify-center mt-8 md:mt-0">
+                  <div className="items-start gap-y-2 flex flex-col">
+                    <Label>Deklinasi Matahari</Label>
+                    <div className="flex gap-x-2 items-center rounded-md">
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
+                        {parseFloat(deklinasiArray[bulanKet][tanggalKet][0])
+                          .toString()
+                          .startsWith("-") ? (
+                          <Minus className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          deklinasiArray[bulanKet][tanggalKet][0]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              deklinasiArray[bulanKet][tanggalKet][0]
+                            )}`
+                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][0])}
+                        <p className="absolute -top-0.5 right-1">°</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          deklinasiArray[bulanKet][tanggalKet][1]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              deklinasiArray[bulanKet][tanggalKet][1]
+                            )}`
+                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][1])}
+                        <p className="absolute -top-0.5 right-1">&apos;</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          deklinasiArray[bulanKet][tanggalKet][2]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              deklinasiArray[bulanKet][tanggalKet][2]
+                            )}`
+                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][2])}
+                        <p className="absolute -top-0.5 right-1">&quot;</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Separator className="md:h-14 md:w-[1px] w-3/4 h-[1px] md:mt-4 " />
+                <div className="w-full flex justify-center">
+                  <div className="items-start md:items-end gap-y-2 flex flex-col">
+                    <Label>Equation of Time</Label>
+                    <div className="flex gap-x-2 items-center rounded-md">
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
+                        {parseFloat(equationArray[bulanKet][tanggalKet][0])
+                          .toString()
+                          .startsWith("-") ? (
+                          <Minus className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        00
+                        <p className="absolute -top-0.5 right-1">°</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          equationArray[bulanKet][tanggalKet][0]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              equationArray[bulanKet][tanggalKet][0]
+                            )}`
+                          : Math.abs(equationArray[bulanKet][tanggalKet][0])}
+                        <p className="absolute -top-0.5 right-1">&apos;</p>
+                      </div>
+                      <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
+                        {Math.abs(
+                          equationArray[bulanKet][tanggalKet][1]
+                        ).toString().length === 1
+                          ? `0${Math.abs(
+                              equationArray[bulanKet][tanggalKet][1]
+                            )}`
+                          : Math.abs(equationArray[bulanKet][tanggalKet][1])}
+                        <p className="absolute -top-0.5 right-1">&quot;</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full flex flex-col gap-y-4 mt-4 sm:gap-y-0 sm:flex-row items-center justify-center">
+              <Button
+                className="lg:w-[600px] w-full sm:mr-[10px]"
+                onClick={() => calculate("daerah")}
+              >
+                Calculate
+              </Button>
+              <Button
+                size={"icon"}
+                onClick={resetValue}
+                className="w-full sm:w-10"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
+        <div className="border w-full flex-wrap gap-8 px-5 pt-8 pb-5 justify-center rounded-md flex relative">
+          <Label className="mb-2 px-5 absolute -top-2 bg-white text-center">
+            Waktu Sholat
+          </Label>
+          <div className="flex flex-col">
+            <Label className="mb-2">Imsak</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiImsya}
+            </div>
           </div>
-        </div>
-        <div className="w-full flex flex-col gap-y-4 sm:gap-y-0 sm:flex-row items-center justify-center">
-          <Button
-            className="lg:w-[600px] w-full sm:mr-[10px]"
-            onClick={calculate}
-          >
-            Calculate
-          </Button>
-          <Button size={"icon"} onClick={resetValue} className="w-full sm:w-10">
-            <RotateCcw className="w-4 h-4" />
-          </Button>
+          <div className="flex flex-col">
+            <Label className="mb-2">Subuh</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiSubuh}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label className="mb-2">Terbit</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiTerbit}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label className="mb-2">Dhuha</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiDhuha}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label className="mb-2">Dzuhur</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiDzuhur}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label className="mb-2">Ashar</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiAshar}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label className="mb-2">Maghrib</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">
+              {ikhtiyatiMaghrib}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label className="mb-2">Isya</Label>
+            <div className="px-5 py-2 bg-zinc-100 rounded">{ikhtiyatiIsya}</div>
+          </div>
         </div>
       </div>
-      {isJawaban && (
-        <div className="lg:w-[800px] w-full h-full mt-12 border border-border p-4 rounded-md">
-          <div className="w-full flex flex-col relative">
-            <p>Diketahui:</p>
-            <div className="sm:flex block mt-5">
-              <p>- Daerah</p>
-              <div className="flex flex-col absolute sm:left-28 left-3">
-                <p>= Lintang</p>
-                <p>= Bujur</p>
+      {isCalculate && (
+        <div className="w-full min-h-[150px] h-full mt-12 border border-border p-4 rounded-md">
+          {isJawaban ? (
+            <div className="w-full flex flex-col relative">
+              <p>Diketahui:</p>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardValue
+                  label="Lintang"
+                  value={
+                    lintangDaerah +
+                    " " +
+                    lintangArray.find((item) => item.value === lintang)?.name
+                  }
+                />
+                <CardValue
+                  label="Bujur"
+                  value={
+                    bujurDaerah +
+                    " " +
+                    bujurArray.find((item) => item.value === bujur)?.name
+                  }
+                />
               </div>
-              <div className="flex flex-col absolute left-24 sm:left-52">
-                <p>
-                  = {lintangDaerah}{" "}
-                  {lintangArray.find((item) => item.value === lintang)?.name}
-                </p>
-                <p>
-                  = {bujurDaerah}{" "}
-                  {bujurArray.find((item) => item.value === bujur)?.name}
-                </p>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardValue
+                  label="EQT (Equation of Time)"
+                  value={equationOfTime}
+                />
+                <CardValue
+                  label="Deklinasi Matahari"
+                  value={deklinasiMatahari}
+                />
+                <CardValue
+                  label="Bujur Waktu Daerah"
+                  value={bujurWaktuDaerah}
+                />
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardValue label="MP">
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = 12j - Equation of Time
+                  </div>
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = 12j - {equationOfTime}
+                  </div>
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = {hasilMP}
+                  </div>
+                </CardValue>
+                <CardValue label="Inter">
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = &#40;Bujur Tempat/Daerah&divide; Bujur Waktu Daerah&#41;
+                    &divide; 15
+                  </div>
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = &#40;{bujurDaerah} - {bujurWaktuDaerah}&#41; &divide; 15
+                  </div>
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = &#40;{hasilInter1}&#41; &divide; 15
+                  </div>
+                  <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                    = {hasilInter}
+                  </div>
+                </CardValue>
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardValue label="HAshar">
+                  <CardValue label="Cotan HAshar" className="my-5">
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = &#40;tan [lintang daerah &minus; deklinasi]&#41; + 1
+                    </div>
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = &#40;tan [{lintangDaerah} &minus; {deklinasiMatahari}
+                      ]&#41; + 1
+                    </div>
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = &#40;tan {minusCotan}&#41; + 1
+                    </div>
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = {cotanHashar} + 1
+                    </div>
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = {plusCotanH}
+                    </div>
+                  </CardValue>
+                  <CardValue label="tan HAshar" className="my-5">
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = {tanH}
+                    </div>
+                  </CardValue>
+                  <CardValue label="HAshar" className="my-5">
+                    <div className="w-full flex py-2 mt-2 items-center px-8 text-start bg-zinc-100">
+                      = {hAshar} atau {derHAshar}
+                    </div>
+                  </CardValue>
+                </CardValue>
+                <CardValue label="Ho">
+                  <CardValue label="HDzuhur" className="my-5" value="-" />
+                  <CardValue
+                    label="HAshar"
+                    className="my-5"
+                    value="Dengan Rumus"
+                  />
+                  <CardValue label="HMaghrib" className="my-5" value="-1°" />
+                  <CardValue label="HIsya" className="my-5" value="-18°" />
+                  <CardValue label="HSubuh" className="my-5" value="-20°" />
+                  <CardValue
+                    label="HImsa"
+                    className="my-5"
+                    value="10 Menit Sebelum Subuh"
+                  />
+                  <CardValue label="HTerbit" className="my-5" value="-1°" />
+                  <CardValue label="HDhuha" className="my-5" value="-4° 30'" />
+                </CardValue>
+              </div>
+              <Separator className="mt-10 mb-5" />
+              <p>Perhitungan:</p>
+              <Label className="ml-4 mt-2">- t:15:</Label>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardPerhitungan
+                  label="Ashar"
+                  lintangDaerah={lintangDaerah}
+                  deklinasiMatahari={deklinasiMatahari}
+                  zenit={derHAshar}
+                  nilaiCos={cosTAshar}
+                  nilaiT={tAshar}
+                  nilaiT15={tAshar15}
+                />
+                <CardPerhitungan
+                  label="Maghrib"
+                  lintangDaerah={lintangDaerah}
+                  deklinasiMatahari={deklinasiMatahari}
+                  zenit="-1°"
+                  nilaiCos={cosTMaghribTerbit}
+                  nilaiT={tMaghribTerbit}
+                  nilaiT15={tMaghribTerbit15}
+                />
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardPerhitungan
+                  label="Isya"
+                  lintangDaerah={lintangDaerah}
+                  deklinasiMatahari={deklinasiMatahari}
+                  zenit="-18°"
+                  nilaiCos={cosTIsya}
+                  nilaiT={tIsya}
+                  nilaiT15={tIsya15}
+                />
+                <CardPerhitungan
+                  label="Subuh"
+                  lintangDaerah={lintangDaerah}
+                  deklinasiMatahari={deklinasiMatahari}
+                  zenit="-20°"
+                  nilaiCos={cosTSubuh}
+                  nilaiT={tSubuh}
+                  nilaiT15={tSubuh15}
+                />
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardPerhitungan
+                  label="Terbit"
+                  lintangDaerah={lintangDaerah}
+                  deklinasiMatahari={deklinasiMatahari}
+                  zenit="-1°"
+                  nilaiCos={cosTMaghribTerbit}
+                  nilaiT={tMaghribTerbit}
+                  nilaiT15={tMaghribTerbit15}
+                />
+                <CardPerhitungan
+                  label="Dhuha"
+                  lintangDaerah={lintangDaerah}
+                  deklinasiMatahari={deklinasiMatahari}
+                  zenit="-1°"
+                  nilaiCos={cosTDhuha}
+                  nilaiT={tDhuha}
+                  nilaiT15={tDhuha15}
+                />
+              </div>
+              <Label className="ml-4 mt-8 mb-2">- Ikhtiyati:</Label>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardIkhtiyati
+                  label="Dzuhur"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatDzuhur}
+                  nilaiIkhtiyati={ikhtiyatiDzuhur}
+                  isDzuhur
+                  isPlus
+                />
+                <CardIkhtiyati
+                  label="Ashar"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatAshar}
+                  nilaiIkhtiyati={ikhtiyatiAshar}
+                  hasilT={tAshar15}
+                  isPlus
+                />
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardIkhtiyati
+                  label="Maghrib"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatMaghrib}
+                  nilaiIkhtiyati={ikhtiyatiMaghrib}
+                  hasilT={tMaghribTerbit15}
+                  isPlus
+                />
+                <CardIkhtiyati
+                  label="Isya"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatIsya}
+                  nilaiIkhtiyati={ikhtiyatiIsya}
+                  hasilT={tIsya15}
+                  isPlus
+                />
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardIkhtiyati
+                  label="Subuh"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatSubuh}
+                  nilaiIkhtiyati={ikhtiyatiSubuh}
+                  hasilT={tSubuh15}
+                  isMinus
+                  isPlus
+                />
+                <CardIkhtiyati
+                  label="Imsak"
+                  nilaiIkhtiyati={ikhtiyatiImsya}
+                  isImsak
+                  subuhTime={ikhtiyatiSubuh}
+                  isMinus
+                />
+              </div>
+              <div className="flex sm:flex-row flex-col mt-8 gap-8">
+                <CardIkhtiyati
+                  label="Terbit"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatTerbit}
+                  nilaiIkhtiyati={ikhtiyatiTerbit}
+                  hasilT={tMaghribTerbit15}
+                />
+                <CardIkhtiyati
+                  label="Dhuha"
+                  hasilMP={hasilMP}
+                  hasilInter={hasilInter}
+                  nilaiIkhtiyat={ikhtiyatDhuha}
+                  nilaiIkhtiyati={ikhtiyatiDhuha}
+                  hasilT={tDhuha15}
+                  isPlus
+                />
               </div>
             </div>
-            <div className="block sm:flex mt-16 sm:mt-12">
-              <p>- Deklinasi Matahari</p>
-              <p className="absolute left-3 sm:left-52">
-                = {deklinasiMatahari}
-              </p>
+          ) : (
+            <div className="flex w-full h-[150px] gap-y-3 flex-col justify-center items-center">
+              <Label>Cara & Rumus</Label>
+              <Button className="px-6" onClick={() => setIsJawaban(true)}>
+                <Expand className="w-4 h-4 mr-2" />
+                Perluas
+              </Button>
             </div>
-            <div className="block sm:flex mt-8 sm:mt-5">
-              <p>- Equation of Time</p>
-              <p className="absolute left-3  sm:left-52">= {equationOfTime}</p>
-            </div>
-            <div className="block sm:flex mt-8 sm:mt-5">
-              <p>- Bujur Waktu Daerah</p>
-              <p className="absolute left-3 sm:left-52">= {bujurWaktuDaerah}</p>
-            </div>
-            <div className="block sm:flex mt-8 sm:mt-5">
-              <p>- MP</p>
-              <p className="absolute left-3 sm:left-52">
-                = 12j - Equation of Time
-              </p>
-            </div>
-            <div className="flex mt-7 sm:mt-0">
-              <p className="opacity-0">MP</p>
-              <p className="absolute left-3 sm:left-52">
-                = 12j - {equationOfTime}
-              </p>
-            </div>
-            <div className="flex mt-1 sm:mt-0">
-              <p className="opacity-0">MP</p>
-              <p className="absolute left-3 sm:left-52">= {hasilMP}</p>
-            </div>
-            <div className="block sm:flex mt-3">
-              <p>- Inter</p>
-              <p className="absolute left-3 sm:left-52">
-                = &#40;Bujur Tempat/Daerah{" "}
-                <span className="hidden sm:flex">
-                  &divide; Bujur Waktu Daerah&#41; &divide; 15
-                </span>
-              </p>
-            </div>
-            <div className="flex sm:hidden mt-7 sm:mt-0">
-              <p className="opacity-0">Inter</p>
-              <p className="absolute left-3 sm:left-52">
-                &divide; Bujur Waktu Daerah&#41; &divide; 15
-              </p>
-            </div>
-            <div className="flex mt-1 sm:mt-7">
-              <p className="opacity-0">Inter</p>
-              <p className="absolute left-3 sm:left-52">
-                = &#40;{bujurDaerah} - {bujurWaktuDaerah}&#41; &divide; 15
-              </p>
-            </div>
-            <div className="flex mt-1 sm:mt-0">
-              <p className="opacity-0">Inter</p>
-              <p className="absolute left-3 sm:left-52">
-                = &#40;{hasilInter1}&#41; &divide; 15
-              </p>
-            </div>
-            <div className="flex mt-1 sm:mt-0">
-              <p className="opacity-0">Inter</p>
-              <p className="absolute left-3 sm:left-52">= {hasilInter}</p>
-            </div>
-            <Separator className="mt-10 mb-5" />
-            <p>Unsur:</p>
-            <p className="mt-3">cotanHAshar</p>
-            <div className="border border-border px-2 py-1 rounded-md">
-              <div className="block sm:flex mt-1 sm:mt-0">
-                <p className="absolute left-3 sm:left-52">
-                  = &#40;tan [lintang daerah &minus; deklinasi]&#41; + 1
-                </p>
-              </div>
-              <div className="flex mt-7">
-                <p className="opacity-0">cotanHAshar</p>
-                <p className="absolute left-3 sm:left-52">
-                  = &#40;tan [{lintangDaerah} &minus; {deklinasiMatahari}]&#41;
-                  + 1
-                </p>
-              </div>
-              <div className="flex mt-1 sm:mt-0">
-                <p className="opacity-0">cotanHAshar</p>
-                <p className="absolute left-3 sm:left-52">
-                  = &#40;tan {minusCotan}&#41; + 1
-                </p>
-              </div>
-              <div className="flex mt-1 sm:mt-0">
-                <p className="opacity-0">cotanHAshar</p>
-                <p className="absolute left-3 sm:left-52">
-                  = {cotanHashar} + 1
-                </p>
-              </div>
-              <div className="flex mt-1 sm:mt-0">
-                <p className="opacity-0">cotanHAshar</p>
-                <p className="absolute left-3 sm:left-52">= {plusCotanH}</p>
-              </div>
-            </div>
-            <div className="block mt-3">
-              <p>tan Hashar</p>
-              <div className="border border-border h-8 py-1 rounded-md">
-                <p className="absolute left-3 sm:left-52">= {tanH}</p>
-              </div>
-            </div>
-            <div className="block mt-3">
-              <p>Hashar</p>
-              <div className="border border-border h-8 py-1 rounded-md">
-                <p className="absolute left-3 sm:left-52">
-                  = {hAshar} atau {derHAshar}
-                </p>
-              </div>
-            </div>
-            <Separator className="my-5" />
-            <p>Perhitungan:</p>
-            <CardPerhitungan
-              label="Ashar"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit={derHAshar}
-              nilaiCos={cosTAshar}
-              nilaiT={tAshar}
-              nilaiT15={tAshar15}
-            />
-            <CardPerhitungan
-              label="Maghrib"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit="-1°"
-              nilaiCos={cosTMaghribTerbit}
-              nilaiT={tMaghribTerbit}
-              nilaiT15={tMaghribTerbit15}
-            />
-            <CardPerhitungan
-              label="Isya"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit="-18°"
-              nilaiCos={cosTIsya}
-              nilaiT={tIsya}
-              nilaiT15={tIsya15}
-            />
-            <CardPerhitungan
-              label="Subuh"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit="-20°"
-              nilaiCos={cosTSubuh}
-              nilaiT={tSubuh}
-              nilaiT15={tSubuh15}
-            />
-            <CardPerhitungan
-              label="Imsya"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit="-22°"
-              nilaiCos={cosTImsya}
-              nilaiT={tImsya}
-              nilaiT15={tImsya15}
-            />
-            <CardPerhitungan
-              label="Terbit"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit="-1°"
-              nilaiCos={cosTMaghribTerbit}
-              nilaiT={tMaghribTerbit}
-              nilaiT15={tMaghribTerbit15}
-            />
-            <CardPerhitungan
-              label="Dhuha"
-              lintangDaerah={lintangDaerah}
-              deklinasiMatahari={deklinasiMatahari}
-              zenit="-1°"
-              nilaiCos={cosTDhuha}
-              nilaiT={tDhuha}
-              nilaiT15={tDhuha15}
-            />
-            <CardIkhtiyati
-              label="Dzuhur"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatDzuhur}
-              nilaiIkhtiyati={ikhtiyatiDzuhur}
-              isDzuhur
-              isPlus
-            />
-            <CardIkhtiyati
-              label="Ashar"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatAshar}
-              nilaiIkhtiyati={ikhtiyatiAshar}
-              hasilT={tAshar15}
-              isPlus
-            />
-            <CardIkhtiyati
-              label="Maghrib"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatMaghrib}
-              nilaiIkhtiyati={ikhtiyatiMaghrib}
-              hasilT={tMaghribTerbit15}
-              isPlus
-            />
-            <CardIkhtiyati
-              label="Isya"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatIsya}
-              nilaiIkhtiyati={ikhtiyatiIsya}
-              hasilT={tIsya15}
-              isPlus
-            />
-            <CardIkhtiyati
-              label="Subuh"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatSubuh}
-              nilaiIkhtiyati={ikhtiyatiSubuh}
-              hasilT={tSubuh15}
-              isMinus
-              isPlus
-            />
-            <CardIkhtiyati
-              label="Imsya"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatImsya}
-              nilaiIkhtiyati={ikhtiyatiImsya}
-              hasilT={tImsya15}
-              isMinus
-            />
-            <CardIkhtiyati
-              label="Terbit"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatTerbit}
-              nilaiIkhtiyati={ikhtiyatiTerbit}
-              hasilT={tMaghribTerbit15}
-            />
-            <CardIkhtiyati
-              label="Dhuha"
-              hasilMP={hasilMP}
-              hasilInter={hasilInter}
-              nilaiIkhtiyat={ikhtiyatDhuha}
-              nilaiIkhtiyati={ikhtiyatiDhuha}
-              hasilT={tDhuha15}
-              isPlus
-            />
-          </div>
+          )}
         </div>
       )}
     </div>
   );
 };
 
-export default KiblatBayanganPage;
+export default HisabWaktuShalatPage;

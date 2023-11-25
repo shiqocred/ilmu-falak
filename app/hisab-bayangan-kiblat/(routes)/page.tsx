@@ -13,6 +13,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import {
+  bujurArray,
+  bulanCollection,
   cn,
   convertCos,
   convertCotan,
@@ -21,9 +23,9 @@ import {
   convertTan,
   convertToDecimal,
   convertToDerajat,
-  convertToDetik,
-  convertToMenit,
   getTrueValue,
+  hariCollection,
+  lintangArray,
 } from "@/lib/utils";
 import {
   CalendarIcon,
@@ -34,38 +36,6 @@ import {
   RotateCcw,
 } from "lucide-react";
 import React, { useState } from "react";
-
-const lintangArray = [
-  { name: "LU", value: "lintang utara" },
-  { name: "LS", value: "lintang selatan" },
-];
-const bujurArray = [
-  { name: "BB", value: "bujur barat" },
-  { name: "BT", value: "bujur timur" },
-];
-const hariCollection = [
-  "Ahad",
-  "Senin",
-  "Selasa",
-  "Rabu",
-  "Kamis",
-  "Jum'at",
-  "Sabtu",
-];
-const bulanCollection = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
 
 const KiblatBayanganPage = () => {
   const [lintang, setLintang] = useState<string>("lintang utara");
@@ -293,48 +263,24 @@ const KiblatBayanganPage = () => {
   };
 
   const calculate = () => {
-    // ----------------------------------------------------------------
-    // .
-    // Rumus Azimut
-    // .
-    // ----------------------------------------------------------------
     let desDerKiblat = convertToDecimal(
       parseFloat(kiblatDerajat),
       parseFloat(kiblatMenit),
       parseFloat(kiblatDetik)
     );
-    let desAz = 90 - parseFloat(desDerKiblat);
+    let desAz = 90 - desDerKiblat;
+    let derAZ = convertToDerajat(desAz);
+    setHasilAz(`${derAZ.derajat}° ${derAZ.menit}' ${derAZ.detik}"`);
 
-    setHasilAz(
-      `${convertToDerajat(desAz)}° ${convertToMenit(desAz)}' ${parseFloat(
-        convertToDetik(desAz).toFixed(2)
-      )}"`
-    );
-
-    // ----------------------------------------------------------------
-    // .
-    // Rumus a
-    // .
-    // ----------------------------------------------------------------
     let desDeklimasi = convertToDecimal(
       parseFloat(dekDerajat),
       parseFloat(dekMenit),
       parseFloat(dekDetik)
     );
-    let desA =
-      90 - (isDekMinus ? -parseFloat(desDeklimasi) : parseFloat(desDeklimasi));
+    let desA = 90 - (isDekMinus ? -desDeklimasi : desDeklimasi);
+    let derA = convertToDerajat(desA);
+    setHasilA(`${derA.derajat}° ${derA.menit}' ${derA.detik}"`);
 
-    setHasilA(
-      `${convertToDerajat(desA)}° ${convertToMenit(desA)}' ${parseFloat(
-        convertToDetik(desA).toFixed(2)
-      )}"`
-    );
-
-    // ----------------------------------------------------------------
-    // .
-    // Rumus b
-    // .
-    // ----------------------------------------------------------------
     let desLintangDaerah = convertToDecimal(
       parseFloat(lintangDerajat),
       parseFloat(lintangMenit),
@@ -342,146 +288,63 @@ const KiblatBayanganPage = () => {
     );
     let desB =
       90 -
-      (lintang === "lintang selatan"
-        ? -parseFloat(desLintangDaerah)
-        : parseFloat(desLintangDaerah));
+      (lintang === "lintang selatan" ? -desLintangDaerah : desLintangDaerah);
+    let derB = convertToDerajat(desB);
+    setHasilB(`${derB.derajat}° ${derB.menit}' ${derB.detik}"`);
 
-    setHasilB(
-      `${convertToDerajat(desB)}° ${convertToMenit(desB)}' ${parseFloat(
-        convertToDetik(desB).toFixed(2)
-      )}"`
-    );
-
-    // ----------------------------------------------------------------
-    // .
-    // Rumus MP
-    // .
-    // ----------------------------------------------------------------
     let desEQT = convertToDecimal(
       parseFloat(eqtDerajat),
       parseFloat(eqtMenit),
       parseFloat(eqtDetik)
     );
-    let desMP = 12 - (isEqtMinus ? -parseFloat(desEQT) : parseFloat(desEQT));
+    let desMP = 12 - (isEqtMinus ? -desEQT : desEQT);
+    let derMP = convertToDerajat(desMP);
+    setHasilMP(`${derMP.derajat}° ${derMP.menit}' ${derMP.detik}"`);
 
-    setHasilMP(
-      `${convertToDerajat(desMP)}° ${convertToMenit(desMP)}' ${parseFloat(
-        convertToDetik(desMP).toFixed(2)
-      )}"`
-    );
-
-    // ----------------------------------------------------------------
-    // .
-    // Rumus Inter
-    // .
-    // ----------------------------------------------------------------
     let desBujurDaerah = convertToDecimal(
       parseFloat(bujurDerajat),
       parseFloat(bujurMenit),
       parseFloat(bujurDetik)
     );
     let inter1 =
-      (bujur === "bujur barat"
-        ? -parseFloat(desBujurDaerah)
-        : parseFloat(desBujurDaerah)) - 105;
-    setHasilInter1(
-      `${convertToDerajat(inter1)}° ${convertToMenit(inter1)}' ${parseFloat(
-        convertToDetik(inter1).toFixed(2)
-      )}"`
-    );
+      (bujur === "bujur barat" ? -desBujurDaerah : desBujurDaerah) - 105;
+    let derI1 = convertToDerajat(inter1);
+    setHasilInter1(`${derI1.derajat}° ${derI1.menit}' ${derI1.detik}"`);
 
     const desHasilInter = inter1 / 15;
-    const resultInter = `${convertToDerajat(desHasilInter)}° ${convertToMenit(
-      desHasilInter
-    )}' ${parseFloat(convertToDetik(desHasilInter).toFixed(2))}"`;
-    setHasilInter(resultInter);
+    const derHI = convertToDerajat(desHasilInter);
+    setHasilInter(`${derHI.derajat}° ${derHI.menit}' ${derHI.detik}"`);
 
-    // ----------------------------------------------------------------
-    // .
-    // Rumus Cotan P
-    // .
-    // ----------------------------------------------------------------
     const resultCotanP = convertCos(desB) * convertTan(desAz);
     setHasilCotanP(`${parseFloat(resultCotanP.toFixed(9))}`);
 
-    // ----------------------------------------------------------------
-    // .
-    // Rumus Tan P
-    // .
-    // ----------------------------------------------------------------
     const resultTanP = getTrueValue(resultCotanP);
     setHasilTanP(`${parseFloat(resultTanP.toFixed(9))}`);
 
     const resultP = convertFromTan(resultTanP);
-    setDerajatTanP(
-      `${convertToDerajat(resultP)}° ${convertToMenit(resultP)}' ${parseFloat(
-        convertToDetik(resultP).toFixed(2)
-      )}"`
-    );
+    const derRP = convertToDerajat(resultP);
+    setDerajatTanP(`${derRP.derajat}° ${derRP.menit}' ${derRP.detik}"`);
 
-    // ----------------------------------------------------------------
-    // .
-    // Rumus cos (C - P)
-    // .
-    // ----------------------------------------------------------------
     const resultCosCP =
       convertCotan(desA) * convertTan(desB) * convertCos(resultP);
     setHasilCosCP(`${parseFloat(resultCosCP.toFixed(9))}`);
 
-    // ----------------------------------------------------------------
-    // .
-    // Rumus (C - P)
-    // .
-    // ----------------------------------------------------------------
     const resultDesCP = convertFromCos(resultCosCP);
-    setHasilCP(
-      `${convertToDerajat(resultDesCP)}° ${convertToMenit(
-        resultDesCP
-      )}' ${parseFloat(convertToDetik(resultDesCP).toFixed(2))}"`
-    );
-    console.log(resultDesCP);
+    const derRDCP = convertToDerajat(resultDesCP);
+    setHasilCP(`${derRDCP.derajat}° ${derRDCP.menit}' ${derRDCP.detik}"`);
 
-    // ----------------------------------------------------------------
-    // .
-    // Rumus c
-    // .
-    // ----------------------------------------------------------------
     let desTotalC = resultDesCP + resultP;
+    let derDTC = convertToDerajat(desTotalC);
+    setHasilC(`${derDTC.derajat}° ${derDTC.menit}' ${derDTC.detik}"`);
 
-    setHasilC(
-      `${convertToDerajat(desTotalC)}° ${convertToMenit(
-        desTotalC
-      )}' ${parseFloat(convertToDetik(desTotalC).toFixed(2))}"`
-    );
-    // ----------------------------------------------------------------
-    // .
-    // Rumus c : 15
-    // .
-    // ----------------------------------------------------------------
     const resultDesC15 = desTotalC / 15;
+    const derRDC15 = convertToDerajat(resultDesC15);
+    setHasilCS15(`${derRDC15.derajat}° ${derRDC15.menit}' ${derRDC15.detik}"`);
 
-    setHasilCS15(
-      `${convertToDerajat(resultDesC15)}° ${convertToMenit(
-        resultDesC15
-      )}' ${parseFloat(convertToDetik(resultDesC15).toFixed(2))}"`
-    );
-    // ----------------------------------------------------------------
-    // .
-    // Rumus bayangan
-    // .
-    // ----------------------------------------------------------------
     let desTotalBayangan = resultDesC15 + desMP - desHasilInter;
-
-    setHasilBayangan(
-      `${convertToDerajat(desTotalBayangan)}° ${convertToMenit(
-        desTotalBayangan
-      )}' ${parseFloat(convertToDetik(desTotalBayangan).toFixed(2))}"`
-    );
-    setHasilJamBayangan(
-      `${convertToDerajat(desTotalBayangan)}:${convertToMenit(
-        desTotalBayangan
-      )}:${parseFloat(convertToDetik(desTotalBayangan).toFixed(2))}`
-    );
+    let derDTB = convertToDerajat(desTotalBayangan);
+    setHasilBayangan(`${derDTB.derajat}° ${derDTB.menit}' ${derDTB.detik}"`);
+    setHasilJamBayangan(`${derDTB.derajat}:${derDTB.menit}:${derDTB.detik}`);
     setIsJawaban(true);
   };
 

@@ -17,8 +17,6 @@ import {
   convertSin,
   convertToDecimal,
   convertToDerajat,
-  convertToDetik,
-  convertToMenit,
   getTrueValue,
 } from "@/lib/utils";
 import { Check, ChevronDown, RotateCcw } from "lucide-react";
@@ -217,39 +215,29 @@ const KiblatDaerahPage = () => {
     const desimalB = convertToDecimal(68, 34, 38.96);
     const desimalC = convertToDecimal(c1, c2, c3);
 
-    const sinA = convertSin(parseFloat(desimalA));
-    const cotanB = convertCotan(parseFloat(desimalB));
-    const sinC = convertSin(parseFloat(desimalC));
-    const cosA = convertCos(parseFloat(desimalA));
-    const cotanC = convertCotan(parseFloat(desimalC));
+    const desCotanB = parseFloat(
+      (
+        (convertSin(desimalA) * convertCotan(desimalB)) / convertSin(desimalC) -
+        convertCos(desimalA) * convertCotan(desimalC)
+      ).toFixed(9)
+    );
+    setDesimalCotanB(`${desCotanB}`);
+    const derCB = convertToDerajat(desCotanB);
+    setDerajatCotanB(`${derCB.derajat}° ${derCB.menit}' ${derCB.detik}"`);
 
-    const desCotanB = ((sinA * cotanB) / sinC - cosA * cotanC).toFixed(9);
-    setDesimalCotanB(desCotanB);
+    const desTanB = parseFloat(getTrueValue(desCotanB).toFixed(9));
+    setDesimalTanB(`${desTanB}`);
+    const derTB = convertToDerajat(desTanB);
+    setDerajatTanB(`${derTB.derajat}° ${derTB.menit}' ${derTB.detik}"`);
 
-    const derCotanB = `${convertToDerajat(Number(desCotanB))}° ${convertToMenit(
-      Number(desCotanB)
-    )}' ${convertToDetik(Number(desCotanB)).toFixed(2)}"`;
-    setDerajatCotanB(derCotanB);
+    const desB = parseFloat(convertFromTan(desTanB).toFixed(9));
+    setDesimalUB(`${desB}`);
+    const derB = convertToDerajat(desB);
+    setDerajatUB(`${derB.derajat}° ${derB.menit}' ${derB.detik}"`);
 
-    const desTanB = getTrueValue(Number(desCotanB)).toFixed(9);
-    setDesimalTanB(desTanB);
-
-    const derTanB = `${convertToDerajat(Number(desTanB))}° ${convertToMenit(
-      Number(desTanB)
-    )}' ${convertToDetik(Number(desTanB)).toFixed(2)}"`;
-    setDerajatTanB(derTanB);
-
-    const desB = convertFromTan(parseFloat(desTanB)).toFixed(9);
-    setDesimalUB(desB);
-
-    const derUB = `${convertToDerajat(Number(desB))}° ${convertToMenit(
-      Number(desB)
-    )}' ${convertToDetik(Number(desB)).toFixed(2)}"`;
-    setDerajatUB(derUB);
-
-    let bU1 = 90 - convertToDerajat(parseFloat(desB));
-    let bU2 = 0 - convertToMenit(parseFloat(desB));
-    let bU3 = 0 - convertToDetik(parseFloat(desB));
+    let bU1 = 90 - derB.derajat;
+    let bU2 = 0 - derB.menit;
+    let bU3 = 0 - derB.detik;
 
     if (bU3 < 0) {
       bU2 -= 1;
@@ -260,9 +248,7 @@ const KiblatDaerahPage = () => {
       bU1 -= 1;
       bU2 += 60;
     }
-
-    const derBU = `${bU1}° ${bU2}' ${bU3.toFixed(2)}"`;
-    setDerajatBU(derBU);
+    setDerajatBU(`${bU1}° ${bU2}' ${bU3}"`);
     setIsJawaban(true);
   };
   return (
