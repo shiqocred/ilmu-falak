@@ -33,6 +33,7 @@ import {
   ikhtiyatiResultImsakSubuh,
   lintangArray,
   tanggalArray,
+  totalTanggal,
 } from "@/lib/utils";
 import {
   CalendarIcon,
@@ -280,8 +281,8 @@ const HisabWaktuShalatPage = () => {
   const [daerah, setDaerah] = useState<string>("bAceh");
 
   // Keterangan
-  const [tanggalKet, setTanggalKet] = useState<any>(1);
-  const [bulanKet, setBulanKet] = useState<any>(1);
+  const [tanggalKet, setTanggalKet] = useState<number>(1);
+  const [bulanKet, setBulanKet] = useState<number>(1);
 
   // koordinat
   const [lintangDerajat, setLintangDerajat] = useState<string>("00");
@@ -324,11 +325,12 @@ const HisabWaktuShalatPage = () => {
     ).detik
   );
 
-  const dekDerajat = Number(deklinasiArray[bulanKet][tanggalKet][0]);
-  const dekMenit = Number(deklinasiArray[bulanKet][tanggalKet][1]);
-  const dekDetik = Number(deklinasiArray[bulanKet][tanggalKet][2]);
-  const eqtMenit = Number(equationArray[bulanKet][tanggalKet][0]);
-  const eqtDetik = Number(equationArray[bulanKet][tanggalKet][1]);
+  const dekDerajat =
+    deklinasiArray.derajat[totalTanggal[bulanKet] + tanggalKet];
+  const dekMenit = deklinasiArray.menit[totalTanggal[bulanKet] + tanggalKet];
+  const dekDetik = deklinasiArray.detik[totalTanggal[bulanKet] + tanggalKet];
+  const eqtMenit = equationArray.menit[totalTanggal[bulanKet] + tanggalKet];
+  const eqtDetik = equationArray.detik[totalTanggal[bulanKet] + tanggalKet];
   const desDek = convertToDecimal(dekDerajat, dekMenit, dekDetik);
   const desEqt = convertToDecimal(0, eqtMenit, eqtDetik);
 
@@ -1069,7 +1071,9 @@ const HisabWaktuShalatPage = () => {
                     <Label>Deklinasi Matahari</Label>
                     <div className="flex gap-x-2 items-center rounded-md">
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
-                        {parseFloat(deklinasiArray[bulanKet][tanggalKet][0])
+                        {deklinasiArray.derajat[
+                          totalTanggal[bulanKet] + tanggalKet
+                        ]
                           .toString()
                           .startsWith("-") ? (
                           <Minus className="h-4 w-4" />
@@ -1079,32 +1083,56 @@ const HisabWaktuShalatPage = () => {
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          deklinasiArray[bulanKet][tanggalKet][0]
+                          deklinasiArray.derajat[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              deklinasiArray[bulanKet][tanggalKet][0]
+                              deklinasiArray.derajat[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][0])}
+                          : Math.abs(
+                              deklinasiArray.derajat[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">°</p>
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          deklinasiArray[bulanKet][tanggalKet][1]
+                          deklinasiArray.menit[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              deklinasiArray[bulanKet][tanggalKet][1]
+                              deklinasiArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][1])}
+                          : Math.abs(
+                              deklinasiArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&apos;</p>
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          deklinasiArray[bulanKet][tanggalKet][2]
+                          deklinasiArray.detik[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              deklinasiArray[bulanKet][tanggalKet][2]
+                              deklinasiArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][2])}
+                          : Math.abs(
+                              deklinasiArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&quot;</p>
                       </div>
                     </div>
@@ -1116,7 +1144,9 @@ const HisabWaktuShalatPage = () => {
                     <Label>Equation of Time</Label>
                     <div className="flex gap-x-2 items-center rounded-md">
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
-                        {parseFloat(equationArray[bulanKet][tanggalKet][0])
+                        {equationArray.menit[
+                          totalTanggal[bulanKet] + tanggalKet
+                        ]
                           .toString()
                           .startsWith("-") ? (
                           <Minus className="h-4 w-4" />
@@ -1130,22 +1160,38 @@ const HisabWaktuShalatPage = () => {
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          equationArray[bulanKet][tanggalKet][0]
+                          equationArray.menit[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              equationArray[bulanKet][tanggalKet][0]
+                              equationArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(equationArray[bulanKet][tanggalKet][0])}
+                          : Math.abs(
+                              equationArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&apos;</p>
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          equationArray[bulanKet][tanggalKet][1]
+                          equationArray.detik[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              equationArray[bulanKet][tanggalKet][1]
+                              equationArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(equationArray[bulanKet][tanggalKet][1])}
+                          : Math.abs(
+                              equationArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&quot;</p>
                       </div>
                     </div>
@@ -1454,7 +1500,9 @@ const HisabWaktuShalatPage = () => {
                     <Label>Deklinasi Matahari</Label>
                     <div className="flex gap-x-2 items-center rounded-md">
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
-                        {parseFloat(deklinasiArray[bulanKet][tanggalKet][0])
+                        {deklinasiArray.derajat[
+                          totalTanggal[bulanKet] + tanggalKet
+                        ]
                           .toString()
                           .startsWith("-") ? (
                           <Minus className="h-4 w-4" />
@@ -1464,32 +1512,56 @@ const HisabWaktuShalatPage = () => {
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          deklinasiArray[bulanKet][tanggalKet][0]
+                          deklinasiArray.derajat[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              deklinasiArray[bulanKet][tanggalKet][0]
+                              deklinasiArray.derajat[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][0])}
+                          : Math.abs(
+                              deklinasiArray.derajat[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">°</p>
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          deklinasiArray[bulanKet][tanggalKet][1]
+                          deklinasiArray.menit[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              deklinasiArray[bulanKet][tanggalKet][1]
+                              deklinasiArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][1])}
+                          : Math.abs(
+                              deklinasiArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&apos;</p>
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          deklinasiArray[bulanKet][tanggalKet][2]
+                          deklinasiArray.detik[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              deklinasiArray[bulanKet][tanggalKet][2]
+                              deklinasiArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(deklinasiArray[bulanKet][tanggalKet][2])}
+                          : Math.abs(
+                              deklinasiArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&quot;</p>
                       </div>
                     </div>
@@ -1501,7 +1573,9 @@ const HisabWaktuShalatPage = () => {
                     <Label>Equation of Time</Label>
                     <div className="flex gap-x-2 items-center rounded-md">
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center border items-center rounded-md box-content">
-                        {parseFloat(equationArray[bulanKet][tanggalKet][0])
+                        {equationArray.menit[
+                          totalTanggal[bulanKet] + tanggalKet
+                        ]
                           .toString()
                           .startsWith("-") ? (
                           <Minus className="h-4 w-4" />
@@ -1515,22 +1589,38 @@ const HisabWaktuShalatPage = () => {
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          equationArray[bulanKet][tanggalKet][0]
+                          equationArray.menit[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              equationArray[bulanKet][tanggalKet][0]
+                              equationArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(equationArray[bulanKet][tanggalKet][0])}
+                          : Math.abs(
+                              equationArray.menit[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&apos;</p>
                       </div>
                       <div className="w-14 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                         {Math.abs(
-                          equationArray[bulanKet][tanggalKet][1]
+                          equationArray.detik[
+                            totalTanggal[bulanKet] + tanggalKet
+                          ]
                         ).toString().length === 1
                           ? `0${Math.abs(
-                              equationArray[bulanKet][tanggalKet][1]
+                              equationArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
                             )}`
-                          : Math.abs(equationArray[bulanKet][tanggalKet][1])}
+                          : Math.abs(
+                              equationArray.detik[
+                                totalTanggal[bulanKet] + tanggalKet
+                              ]
+                            )}
                         <p className="absolute -top-0.5 right-1">&quot;</p>
                       </div>
                     </div>

@@ -2,6 +2,10 @@ import { type ClassValue, clsx } from "clsx";
 import { SetStateAction } from "react";
 import { twMerge } from "tailwind-merge";
 
+export const totalTanggal = [
+  0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334,
+];
+
 export const lintangArray = [
   { name: "LU", value: "lintang utara" },
   { name: "LS", value: "lintang selatan" },
