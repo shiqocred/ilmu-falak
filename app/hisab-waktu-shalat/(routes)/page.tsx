@@ -281,8 +281,8 @@ const HisabWaktuShalatPage = () => {
   const [daerah, setDaerah] = useState<string>("bAceh");
 
   // Keterangan
-  const [tanggalKet, setTanggalKet] = useState<number>(1);
-  const [bulanKet, setBulanKet] = useState<number>(1);
+  const [tanggalKet, setTanggalKet] = useState<number>(0);
+  const [bulanKet, setBulanKet] = useState<number>(0);
 
   // koordinat
   const [lintangDerajat, setLintangDerajat] = useState<string>("00");
@@ -977,8 +977,8 @@ const HisabWaktuShalatPage = () => {
                       variant={"outline"}
                     >
                       <CalendarIcon className="w-4 h-4" />
-                      <p className="flex-1">{`${tanggalKet} ${
-                        bulanCollection[bulanKet - 1]
+                      <p className="flex-1">{`${tanggalKet + 1} ${
+                        bulanCollection[bulanKet]
                       }`}</p>
                     </Button>
                   </PopoverTrigger>
@@ -991,8 +991,8 @@ const HisabWaktuShalatPage = () => {
                             variant={"ghost"}
                             className="w-full h-7 text-sm last:mb-[196px] rounded-sm snap-start"
                             onClick={() => {
-                              setBulanKet(parseFloat(item));
-                              setTanggalKet(1);
+                              setBulanKet(parseFloat(item) - 1);
+                              setTanggalKet(0);
                             }}
                           >
                             {bulanCollection[parseFloat(item) - 1]}
@@ -1009,7 +1009,7 @@ const HisabWaktuShalatPage = () => {
                                 variant={"ghost"}
                                 className="w-full h-7 text-sm last:mb-[196px] snap-start"
                                 onClick={() => {
-                                  setTanggalKet(parseFloat(item));
+                                  setTanggalKet(parseFloat(item) - 1);
                                 }}
                               >
                                 {item}
@@ -1029,7 +1029,7 @@ const HisabWaktuShalatPage = () => {
                                     variant={"ghost"}
                                     className="w-full h-7 text-sm last:mb-[196px] snap-start"
                                     onClick={() => {
-                                      setTanggalKet(parseFloat(item));
+                                      setTanggalKet(parseFloat(item) - 1);
                                     }}
                                   >
                                     {item}
@@ -1044,7 +1044,7 @@ const HisabWaktuShalatPage = () => {
                                     variant={"ghost"}
                                     className="w-full h-7 text-sm last:mb-[196px] snap-start"
                                     onClick={() => {
-                                      setTanggalKet(parseFloat(item));
+                                      setTanggalKet(parseFloat(item) - 1);
                                     }}
                                   >
                                     {item}
@@ -1286,7 +1286,7 @@ const HisabWaktuShalatPage = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="w-full flex flex-col items-center justify-center gap-y-4 text-sm">
+              <div className="w-full flex lg:flex-row flex-col items-center justify-center gap-y-4 text-sm">
                 <div className="flex w-full justify-center gap-x-2 items-center py-1 px-3 rounded-md">
                   <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                     {getValuePartial(
@@ -1330,7 +1330,7 @@ const HisabWaktuShalatPage = () => {
                       : "LU"}
                   </div>
                 </div>
-                <Separator className="md:h-10 md:w-[1px] w-3/4 h-[1px]" />
+                <Separator className="lg:h-10 lg:w-[1px] w-3/4 h-[1px]" />
                 <div className="flex w-full justify-center gap-x-2 items-center py-1 px-3 rounded-md">
                   <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                     {getValuePartial(
@@ -1375,7 +1375,7 @@ const HisabWaktuShalatPage = () => {
                   </div>
                 </div>
               </div>
-              <Separator orientation="vertical" className="h-10 hidden" />
+              <Separator className="h-20 w-[1px] lg:h-10 hidden md:flex lg:hidden" />
               <div className="relative hidden md:flex justify-center w-44 mr-8">
                 <div className="w-16 h-10 text-xs md:text-sm flex justify-center items-center border rounded-md box-content relative">
                   {daerahArray.find((item) => item.value === daerah)?.bwd}
@@ -1403,15 +1403,12 @@ const HisabWaktuShalatPage = () => {
                       variant={"outline"}
                     >
                       <CalendarIcon className="w-4 h-4" />
-                      <p className="flex-1">{`${tanggalKet} ${
-                        bulanCollection[bulanKet - 1]
+                      <p className="flex-1">{`${tanggalKet + 1} ${
+                        bulanCollection[bulanKet]
                       }`}</p>
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent
-                    className="p-0 w-[200px] md:w-[250px]"
-                    align="center"
-                  >
+                  <PopoverContent className="p-0 w-[250px]" align="center">
                     <div className="flex h-[232px]">
                       <ScrollArea className="w-[169px] px-2 mt-2 h-56">
                         {bulanArray.map((item) => (
@@ -1420,8 +1417,8 @@ const HisabWaktuShalatPage = () => {
                             variant={"ghost"}
                             className="w-full h-7 text-sm last:mb-[196px] rounded-sm snap-start"
                             onClick={() => {
-                              setBulanKet(parseFloat(item));
-                              setTanggalKet(1);
+                              setBulanKet(parseFloat(item) - 1);
+                              setTanggalKet(0);
                             }}
                           >
                             {bulanCollection[parseFloat(item) - 1]}
@@ -1438,7 +1435,7 @@ const HisabWaktuShalatPage = () => {
                                 variant={"ghost"}
                                 className="w-full h-7 text-sm last:mb-[196px] snap-start"
                                 onClick={() => {
-                                  setTanggalKet(parseFloat(item));
+                                  setTanggalKet(parseFloat(item) - 1);
                                 }}
                               >
                                 {item}
@@ -1458,7 +1455,7 @@ const HisabWaktuShalatPage = () => {
                                     variant={"ghost"}
                                     className="w-full h-7 text-sm last:mb-[196px] snap-start"
                                     onClick={() => {
-                                      setTanggalKet(parseFloat(item));
+                                      setTanggalKet(parseFloat(item) - 1);
                                     }}
                                   >
                                     {item}
@@ -1473,7 +1470,7 @@ const HisabWaktuShalatPage = () => {
                                     variant={"ghost"}
                                     className="w-full h-7 text-sm last:mb-[196px] snap-start"
                                     onClick={() => {
-                                      setTanggalKet(parseFloat(item));
+                                      setTanggalKet(parseFloat(item) - 1);
                                     }}
                                   >
                                     {item}
