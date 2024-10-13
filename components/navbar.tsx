@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 const Navbar = () => {
   const pathname = usePathname();
   return (
-    <div className="w-full lg:py-5 py-3 px-3 sm:px-8 items-center border-b flex lg:justify-start justify-between">
+    <div className="w-full lg:h-14 py-3 px-3 sm:px-8 items-center border-b flex lg:justify-start justify-between">
       <Link href="/" className="z-10 cursor-default sm:cursor-pointer">
         <h1 className="font-bold text-sm">ARAHKIBLAT</h1>
       </Link>

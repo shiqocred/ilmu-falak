@@ -241,3 +241,12 @@ export const ikhtiyatResult = (
   setC(`${g.derajat}j ${g.menit}m ${g.detik}d`);
   return e;
 };
+
+export const getValueArray = (a: number | undefined) => {
+  return a ?? 0;
+};
+export const getValuePartial = (a: number) => {
+  return Math.abs(a).toString().length === 1
+    ? `0${Math.abs(a)}`
+    : `${Math.abs(a)}`;
+};
