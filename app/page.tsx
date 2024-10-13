@@ -21,13 +21,13 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-y-0 justify-center items-center mt-8 gap-x-4">
             <Link
-              href={"/arah-kiblat-daerah"}
+              href={"/hisab-arah-kiblat"}
               className={buttonVariants({ variant: "default" })}
             >
               Arah Kiblat Daerah
             </Link>
             <Link
-              href={"/arah-kiblat-bayangan"}
+              href={"/hisab-bayangan-kiblat"}
               className={buttonVariants({ variant: "default" })}
             >
               Arah Kiblat Bayangan
